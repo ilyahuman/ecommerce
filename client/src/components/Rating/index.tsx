@@ -1,4 +1,4 @@
-import React, { CSSProperties, StyleHTMLAttributes } from 'react';
+import React, { CSSProperties } from 'react';
 
 interface RatingProps {
     value: number;

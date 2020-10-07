@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { AppRoutes } from '../config';
 
@@ -7,6 +7,8 @@ import { Footer } from './Footer';
 import { HomePage } from '../pages/HomePage';
 import { ProductPage } from '../pages/ProductPage';
 import { Container } from 'react-bootstrap';
+
+import { asyncGetProducts } from '../store/product';
 
 export const App: React.FC = (): JSX.Element => {
     return (
