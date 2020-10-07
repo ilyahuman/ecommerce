@@ -1,29 +1,27 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { Product } from '../types';
 import { ProductCard } from '../components/ProductCard';
-import { useDispatch, useSelector } from 'react-redux';
-import { asyncGetProducts } from '../store/product';
+import { useSelector } from 'react-redux';
+import { Loader } from '../components/Loader';
+import { Message } from '../components/Message';
 
 import { StoreRootState } from '../store';
 
 export const HomePage = () => {
-    const dispatch = useDispatch();
     const { loading, error, products } = useSelector(
-        (state: StoreRootState) => state.product
+        (state: StoreRootState) => state.products
     );
-
-    useEffect(() => {
-        dispatch(asyncGetProducts());
-    }, [dispatch]);
 
     return (
         <>
             <Row>
                 {loading ? (
-                    'Loading...'
+                    <Loader />
                 ) : error ? (
-                    <h2>{error}</h2>
+                    <Message variant="danger">
+                        <span>{error}</span>
+                    </Message>
                 ) : (
                     products.map((product: Product) => {
                         return (

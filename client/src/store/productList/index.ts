@@ -28,20 +28,20 @@ interface ProductsFailed {
 
 type ProductActions = ProductsRequest | ProductsSuccess | ProductsFailed;
 
-const productRequest = function (): ProductActions {
+const productsRequest = function (): ProductActions {
     return {
         type: ProductActionTypes.PRODUCT_LIST_REQUEST,
     };
 };
 
-const productSuccess = function (products: Product[]): ProductActions {
+const productsSuccess = function (products: Product[]): ProductActions {
     return {
         type: ProductActionTypes.PRODUCT_LIST_SUCCESS,
         payload: products,
     };
 };
 
-const productFailed = function (error: string): ProductActions {
+const productsFailed = function (error: string): ProductActions {
     return {
         type: ProductActionTypes.PRODUCT_LIST_FAILED,
         payload: error,
@@ -56,17 +56,17 @@ export const asyncGetProducts = () => async (
     dispatch: Dispatch<ProductActions>
 ) => {
     try {
-        dispatch(productRequest());
+        dispatch(productsRequest());
 
         const response = await axios.get<Product[]>(
             'http://localhost:5000/api/products'
         );
 
         if (response.data) {
-            dispatch(productSuccess(response.data));
+            dispatch(productsSuccess(response.data));
         }
     } catch (error) {
-        dispatch(productFailed(error.message));
+        dispatch(productsFailed(error.message));
         console.error(error.message);
     }
 };
@@ -90,7 +90,7 @@ const productState: ProductsState = {
     error: null,
 };
 
-export default function reducer(
+export function productListReducer(
     state: ProductsState = productState,
     action: ProductActions
 ) {

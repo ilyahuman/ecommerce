@@ -6,11 +6,18 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { HomePage } from '../pages/HomePage';
 import { ProductPage } from '../pages/ProductPage';
+import { CartPage } from '../pages/CartPage';
 import { Container } from 'react-bootstrap';
-
-import { asyncGetProducts } from '../store/product';
+import { useDispatch } from 'react-redux';
+import { asyncGetProducts } from '../store/productList';
 
 export const App: React.FC = (): JSX.Element => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(asyncGetProducts());
+    }, [dispatch]);
+
     return (
         <div className="App">
             <Router>
@@ -26,6 +33,10 @@ export const App: React.FC = (): JSX.Element => {
                             <Route
                                 path={`${AppRoutes.PRODUCT}/:id`}
                                 component={ProductPage}
+                            />
+                            <Route
+                                path={`${AppRoutes.CART}/:id`}
+                                component={CartPage}
                             />
                         </Switch>
                     </Container>
