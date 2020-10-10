@@ -9,27 +9,17 @@ import { Message } from '../components/Message';
 import { asyncGetProduct } from '../store/productDetail';
 import { StoreRootState } from '../store';
 
-import { Product } from '../types';
+import { makeQtySelect } from '../utils/makeQtySelect';
 
 interface ProductPageParams {
     id: string;
-}
-
-function makeQtySelect(qty: number): number[] {
-    const qtyArray = [];
-
-    for (let i = 1; i <= qty; i++) {
-        qtyArray.push(i);
-    }
-
-    return [...qtyArray];
 }
 
 export const ProductPage = () => {
     const history = useHistory();
     const dispatch = useDispatch();
     const [qtyArray, setQtyArray] = useState<number[]>([]);
-    const [qty, setQty] = useState<string>();
+    const [qty, setQty] = useState<number>(1);
     const { id } = useParams<ProductPageParams>();
     const { product, loading, error } = useSelector(
         (state: StoreRootState) => state.productDetail
@@ -39,7 +29,6 @@ export const ProductPage = () => {
         dispatch(asyncGetProduct(id));
     }, [dispatch]);
 
-    // @ts-ignore-start
     const {
         price,
         name,
@@ -48,10 +37,9 @@ export const ProductPage = () => {
         description,
         image,
         countInStock,
-    }: Product = product;
-    // @ts-ignore-end
+    } = product;
 
-    const addToCartHandler = (event) => {
+    const addToCartHandler = (event: any) => {
         event.preventDefault();
         history.push(`/cart/${id}?qty=${qty}`);
     };
@@ -59,7 +47,6 @@ export const ProductPage = () => {
     useEffect(() => {
         if (countInStock) {
             setQtyArray(makeQtySelect(countInStock));
-            setQty('1');
         }
     }, [countInStock]);
 
@@ -103,7 +90,11 @@ export const ProductPage = () => {
                                             <Form.Control
                                                 as="select"
                                                 onChange={(event) =>
-                                                    setQty(event.target.value)
+                                                    setQty(
+                                                        parseInt(
+                                                            event.target.value
+                                                        )
+                                                    )
                                                 }
                                             >
                                                 {qtyArray.map(

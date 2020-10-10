@@ -1,0 +1,88 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Form, Row, Col, Button } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { Message } from '../components/Message';
+import { Loader } from '../components/Loader';
+import { FormContainer } from '../components/FormContainer';
+
+import { asyncSignIn } from '../store/user';
+import { StoreRootState } from '../store';
+
+import { isObjectEmpty } from '../utils/isObjectEmpty';
+
+export const SignInPage = () => {
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const { currentUser, isSignedIn, loading, error } = useSelector(
+        (state: StoreRootState) => state.user
+    );
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const { search } = useLocation();
+    const redirect: string = search ? search.split('=')[1] : '/';
+
+    const onSubmitForm = (event: React.FormEvent<HTMLFontElement>) => {
+        event.preventDefault();
+        dispatch(asyncSignIn({ email, password }));
+        console.log(email, password);
+    };
+
+    useEffect(() => {
+        debugger;
+        if (!isObjectEmpty(currentUser)) {
+            history.push(redirect);
+        }
+    }, [history, isSignedIn, redirect]);
+
+    return (
+        <FormContainer>
+            <h1>Sigh In</h1>
+            {error && (
+                <Message variant="danger">
+                    <span>{error}</span>
+                </Message>
+            )}
+            {loading && <Loader />}
+            <Form onSubmit={onSubmitForm}>
+                <Form.Group>
+                    <Form.Label>Email address</Form.Label>
+                    <Form.Control
+                        type="email"
+                        value={email}
+                        placeholder="Enter email"
+                        onChange={(event) => setEmail(event.target.value)}
+                    ></Form.Control>
+                </Form.Group>
+
+                <Form.Group>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        value={password}
+                        placeholder="Enter password"
+                        onChange={(event) => setPassword(event.target.value)}
+                    ></Form.Control>
+                </Form.Group>
+                <Button type="submit">Sign in</Button>
+            </Form>
+
+            <Row className="py-3">
+                <Col>
+                    New customer?{' '}
+                    <Link
+                        to={
+                            redirect
+                                ? `/register?redirect=${redirect}`
+                                : '/register'
+                        }
+                    >
+                        Register
+                    </Link>
+                </Col>
+            </Row>
+        </FormContainer>
+    );
+};

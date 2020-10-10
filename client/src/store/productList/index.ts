@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Product } from '../../types/index';
+import Axios from 'axios';
 
 /**
  * * Actions
@@ -66,7 +67,13 @@ export const asyncGetProducts = () => async (
             dispatch(productsSuccess(response.data));
         }
     } catch (error) {
-        dispatch(productsFailed(error.message));
+        dispatch(
+            productsFailed(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            )
+        );
         console.error(error.message);
     }
 };
@@ -90,10 +97,10 @@ const productState: ProductsState = {
     error: null,
 };
 
-export function productListReducer(
+export const productListReducer = (
     state: ProductsState = productState,
     action: ProductActions
-) {
+): ProductsState => {
     switch (action.type) {
         case ProductActionTypes.PRODUCT_LIST_REQUEST:
             return {
@@ -115,4 +122,4 @@ export function productListReducer(
         default:
             return state;
     }
-}
+};

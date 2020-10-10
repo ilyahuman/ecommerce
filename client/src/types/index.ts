@@ -10,3 +10,25 @@ export interface Product {
     rating: number;
     numReviews: number;
 }
+
+export interface CartProduct {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    countInStock: number;
+    qty: number;
+}
+
+export interface UserSignInRequest {
+    email: string;
+    password: string;
+}
+
+export interface User {
+    id: string;
+    email: string;
+    name: string;
+    isAdmin: boolean;
+    token: string;
+}

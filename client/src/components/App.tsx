@@ -7,6 +7,7 @@ import { Footer } from './Footer';
 import { HomePage } from '../pages/HomePage';
 import { ProductPage } from '../pages/ProductPage';
 import { CartPage } from '../pages/CartPage';
+import { SignInPage } from '../pages/SignInPage';
 import { Container } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { asyncGetProducts } from '../store/productList';
@@ -31,11 +32,20 @@ export const App: React.FC = (): JSX.Element => {
                                 component={HomePage}
                             />
                             <Route
+                                path={AppRoutes.LOGIN}
+                                component={SignInPage}
+                            />
+                            <Route
                                 path={`${AppRoutes.PRODUCT}/:id`}
                                 component={ProductPage}
                             />
                             <Route
                                 path={`${AppRoutes.CART}/:id`}
+                                component={CartPage}
+                            />
+                            <Route
+                                exact
+                                path={`${AppRoutes.CART}`}
                                 component={CartPage}
                             />
                         </Switch>

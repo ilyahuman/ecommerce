@@ -5,7 +5,8 @@ import { connectToDb } from './db/index.js';
 import { notFound, errorHandler } from './middleware/error.js';
 
 // routes
-import { productRouter } from './routes/product.js';
+import { productRouter } from './routes/productRoutes.js';
+import { userRouter } from './routes/userRoutes.js';
 
 const app = new App().app;
 
@@ -13,6 +14,8 @@ const main = async () => {
     await connectToDb();
 
     app.use('/api/products', productRouter);
+
+    app.use('/api/users/', userRouter);
 
     app.use(notFound);
 

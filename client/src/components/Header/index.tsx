@@ -1,16 +1,15 @@
 import React from 'react';
-import {
-    Navbar,
-    Nav,
-    Form,
-    FormControl,
-    Button,
-    Container,
-} from 'react-bootstrap';
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import { AppRoutes } from '../../config';
 
+import { StoreRootState } from '../../store';
+
 export const Header = (): JSX.Element => {
+    const { isSignedIn, currentUser } = useSelector(
+        (state: StoreRootState) => state.user
+    );
     return (
         <div>
             <Navbar bg="dark" expand="lg" variant="dark">
@@ -27,11 +26,28 @@ export const Header = (): JSX.Element => {
                                     Cart
                                 </Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to={AppRoutes.LOGIN}>
-                                <Nav.Link>
-                                    <i className="fas fa-user"></i> Link
-                                </Nav.Link>
-                            </LinkContainer>
+                            {isSignedIn ? (
+                                <NavDropdown title="Dropdown" id="nav-dropdown">
+                                    <LinkContainer to={AppRoutes.LOGIN}>
+                                        <Nav.Link>
+                                            <i className="fas fa-user"></i> User
+                                            account Out
+                                        </Nav.Link>
+                                    </LinkContainer>
+                                    <LinkContainer to={AppRoutes.LOGIN}>
+                                        <Nav.Link>
+                                            <i className="fas fa-user"></i> Sign
+                                            Out
+                                        </Nav.Link>
+                                    </LinkContainer>
+                                </NavDropdown>
+                            ) : (
+                                <LinkContainer to={AppRoutes.LOGIN}>
+                                    <Nav.Link>
+                                        <i className="fas fa-user"></i> Sign In
+                                    </Nav.Link>
+                                </LinkContainer>
+                            )}
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

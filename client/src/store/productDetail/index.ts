@@ -69,7 +69,13 @@ export const asyncGetProduct = (id: string) => async (
             dispatch(productSuccess(response.data));
         }
     } catch (error) {
-        dispatch(productFailed(error.message));
+        dispatch(
+            productFailed(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            )
+        );
         console.error(error.message);
     }
 };
@@ -82,21 +88,21 @@ export const asyncGetProduct = (id: string) => async (
  */
 
 export interface ProductDetailState {
-    product: {};
+    product: Product;
     loading: boolean;
     error: string | null;
 }
 
 const productState: ProductDetailState = {
-    product: {},
+    product: {} as Product,
     loading: false,
     error: '',
 };
 
-export function productDetailReducer(
+export const productDetailReducer = (
     state: ProductDetailState = productState,
     action: ProductDetailActions
-) {
+): ProductDetailState => {
     switch (action.type) {
         case ProductActionTypes.PRODUCT_DETAIL_REQUEST:
             return {
@@ -118,4 +124,4 @@ export function productDetailReducer(
         default:
             return state;
     }
-}
+};

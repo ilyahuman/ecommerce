@@ -24,7 +24,6 @@ export const ProductCard: React.FunctionComponent<ProductProps> = ({
                     <Card.Text>{category}</Card.Text>
                     <Card.Text>{price}</Card.Text>
                     <Rating value={rating} text={`${numReviews} reviews`} />
-                    <Button variant="primary">Go somewhere</Button>
                 </Card.Body>
             </Card>
         </Link>
