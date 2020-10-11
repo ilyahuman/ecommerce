@@ -1,7 +1,9 @@
 import { Dispatch } from 'redux';
 import axios, { AxiosError } from 'axios';
 import { Product } from '../../types/index';
-import Axios from 'axios';
+
+// Services
+import { ProductService } from '../../services/productService';
 
 /**
  * * Actions
@@ -59,12 +61,10 @@ export const asyncGetProducts = () => async (
     try {
         dispatch(productsRequest());
 
-        const response = await axios.get<Product[]>(
-            'http://localhost:5000/api/products'
-        );
+        const { data } = await ProductService.getProducts();
 
-        if (response.data) {
-            dispatch(productsSuccess(response.data));
+        if (data) {
+            dispatch(productsSuccess(data));
         }
     } catch (error) {
         dispatch(

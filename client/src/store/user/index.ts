@@ -1,37 +1,97 @@
 import { Dispatch } from 'redux';
-import axios from 'axios';
-import { UserSignInRequest, User } from '../../types';
+import {
+    UserSignInRequest,
+    User,
+    UserSignUpRequest,
+    UserUpdateRequest,
+} from '../../types';
+
+// Utils
+import { history } from '../../utils/history';
+
+// Services
+import { AuthService } from '../../services/userService';
 
 /**
  * * Actions
  */
 
 enum UserActionTypes {
-    SIGNIN_REQUEST = 'SIGNIN_REQUEST',
-    SIGNIN_SUCCESS = 'SIGNIN_SUCCESS',
-    SIGNIN_FAILED = 'SIGNIN_FAILED',
-    LOGOUT_USER = 'LOGOUT_USER',
+    SIGNIN_REQUEST,
+    SIGNIN_SUCCESS,
+    SIGNIN_FAILED,
+
+    SIGNUP_REQUEST,
+    SIGNUP_FAILED,
+
+    USER_DETAILS_REQUEST,
+    USER_DETAILS_SUCCESS,
+    USER_DETAILS_FAILED,
+
+    USER_UPDATE_REQUEST,
+    USER_UPDATE_SUCCESS,
+    USER_UPDATE_FAILED,
+
+    SIGNOUT_USER,
+    CLEAR_ERROR,
 }
 
-interface SignInRequest {
+interface SignInRequestAction {
     type: UserActionTypes.SIGNIN_REQUEST;
 }
 
-interface SignInSuccess {
+interface SignInSuccessAction {
     type: UserActionTypes.SIGNIN_SUCCESS;
     payload: User;
 }
 
-interface SignInFailed {
+interface SignInFailedAction {
     type: UserActionTypes.SIGNIN_FAILED;
     payload: string;
 }
 
-interface LogoutUser {
-    type: UserActionTypes.LOGOUT_USER;
+interface SignUpRequestAction {
+    type: UserActionTypes.SIGNUP_REQUEST;
 }
 
-type UserActions = SignInRequest | SignInSuccess | SignInFailed | LogoutUser;
+interface SignUpFailedAction {
+    type: UserActionTypes.SIGNUP_FAILED;
+    payload: string;
+}
+
+interface SignOutUserAction {
+    type: UserActionTypes.SIGNOUT_USER;
+}
+
+interface ClearErrorAction {
+    type: UserActionTypes.CLEAR_ERROR;
+}
+
+interface UserUpdateRequestAction {
+    type: UserActionTypes.USER_UPDATE_REQUEST;
+}
+
+interface UserUpdateSuccessAction {
+    type: UserActionTypes.USER_UPDATE_SUCCESS;
+    payload: User;
+}
+
+interface UserUpdateFailedAction {
+    type: UserActionTypes.USER_UPDATE_FAILED;
+    payload: string;
+}
+
+type UserActions =
+    | SignInRequestAction
+    | SignInSuccessAction
+    | SignInFailedAction
+    | UserUpdateRequestAction
+    | UserUpdateSuccessAction
+    | UserUpdateFailedAction
+    | SignUpRequestAction
+    | SignUpFailedAction
+    | SignOutUserAction
+    | ClearErrorAction;
 
 const signInRequest = function (): UserActions {
     return {
@@ -53,9 +113,48 @@ const signInFailed = function (error: string): UserActions {
     };
 };
 
-const logoutUser = function (): UserActions {
+const signUpRequest = function (): UserActions {
     return {
-        type: UserActionTypes.LOGOUT_USER,
+        type: UserActionTypes.SIGNUP_REQUEST,
+    };
+};
+
+const signUpFailed = function (error: string): UserActions {
+    return {
+        type: UserActionTypes.SIGNUP_FAILED,
+        payload: error,
+    };
+};
+
+const userUpdateRequest = function (): UserActions {
+    return {
+        type: UserActionTypes.SIGNIN_REQUEST,
+    };
+};
+
+const userUpdateSuccess = function (user: User): UserActions {
+    return {
+        type: UserActionTypes.SIGNIN_SUCCESS,
+        payload: user,
+    };
+};
+
+const userUpdateFailed = function (error: string): UserActions {
+    return {
+        type: UserActionTypes.SIGNIN_FAILED,
+        payload: error,
+    };
+};
+
+const signOutUser = function (): UserActions {
+    return {
+        type: UserActionTypes.SIGNOUT_USER,
+    };
+};
+
+export const clearError = function (): ClearErrorAction {
+    return {
+        type: UserActionTypes.CLEAR_ERROR,
     };
 };
 
@@ -69,10 +168,7 @@ export const asyncSignIn = (user: UserSignInRequest) => async (
     try {
         dispatch(signInRequest());
 
-        const { data } = await axios.post<User>(
-            `http://localhost:5000/api/users/signin`,
-            user
-        );
+        const { data } = await AuthService.signIn(user);
 
         if (data) {
             dispatch(signInSuccess(data));
@@ -91,12 +187,39 @@ export const asyncSignIn = (user: UserSignInRequest) => async (
     }
 };
 
-export const signOut = () => async (dispatch: Dispatch<UserActions>) => {
+// TODO any type and Dispatch asyncAction inside asyncAction
+export const asyncSignUp = (userCreds: UserSignUpRequest) => async (
+    dispatch: Dispatch<any>
+) => {
+    try {
+        const { email, password } = userCreds;
+
+        dispatch(signUpRequest());
+
+        // Save to DB and if all is OK go forward
+        await AuthService.signUp(userCreds);
+
+        // Use prev User to login
+        dispatch(asyncSignIn({ email, password }));
+    } catch (error) {
+        dispatch(
+            signUpFailed(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            )
+        );
+        console.error(error.message);
+    }
+};
+
+export const asyncSignOut = () => async (dispatch: Dispatch<UserActions>) => {
     // ? Here we can revoke token ?
 
     // Remove token from local storage and Redux.
-    dispatch(logoutUser());
+    dispatch(signOutUser());
     localStorage.removeItem('user');
+    history.push('/');
     //await dispatch(actions.reset());
     //await clearCheckoutDataFromStorage();
 
@@ -104,6 +227,39 @@ export const signOut = () => async (dispatch: Dispatch<UserActions>) => {
     // We don't need to create a new cart here because we're going to refresh
     // the page immediately after.
     // await dispatch(removeCart());
+};
+
+export const asyncUpdateUser = (userCreds: UserUpdateRequest) => async (
+    dispatch: Dispatch<UserActions>
+) => {
+    try {
+        dispatch(userUpdateRequest());
+
+        const { data } = await AuthService.updateUser(userCreds);
+
+        if (data) {
+            dispatch(userUpdateSuccess(data));
+
+            localStorage.setItem('user', JSON.stringify(data));
+        }
+    } catch (error) {
+        dispatch(
+            userUpdateFailed(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            )
+        );
+        console.error(error.message);
+    }
+};
+
+export const asyncGetUser = () => async (dispatch: Dispatch<UserActions>) => {
+    try {
+        const { data } = await AuthService.getUser();
+    } catch (error) {
+        console.error(error.message);
+    }
 };
 
 /**
@@ -122,7 +278,7 @@ export interface UserState {
 
 export const isSignedIn = (): boolean => !!localStorage.getItem('user');
 
-const productState: UserState = {
+const userState: UserState = {
     currentUser: {} as User,
     loading: false,
     error: '',
@@ -138,7 +294,7 @@ const productState: UserState = {
  * @param action
  */
 export const signInReducer = (
-    state: UserState = productState,
+    state: UserState = userState,
     action: UserActions
 ): UserState => {
     switch (action.type) {
@@ -161,13 +317,48 @@ export const signInReducer = (
                 loading: false,
                 error: action.payload,
             };
-        case UserActionTypes.LOGOUT_USER:
+        case UserActionTypes.SIGNUP_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case UserActionTypes.SIGNUP_FAILED:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        case UserActionTypes.USER_UPDATE_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case UserActionTypes.USER_UPDATE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                error: null,
+                isSignedIn: true,
+                currentUser: Object.assign({}, action.payload),
+            };
+        case UserActionTypes.USER_UPDATE_FAILED:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        case UserActionTypes.SIGNOUT_USER:
             return {
                 ...state,
                 currentUser: {} as User,
                 loading: false,
                 error: null,
                 isSignedIn: false,
+            };
+        case UserActionTypes.CLEAR_ERROR:
+            return {
+                ...state,
+                error: null,
             };
         default:
             return state;

@@ -25,6 +25,18 @@ export interface UserSignInRequest {
     password: string;
 }
 
+export interface UserSignUpRequest {
+    name: string;
+    email: string;
+    password: string;
+}
+
+export interface UserUpdateRequest {
+    name?: string;
+    email?: string;
+    password?: string;
+}
+
 export interface User {
     id: string;
     email: string;

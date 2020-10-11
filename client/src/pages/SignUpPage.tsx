@@ -7,26 +7,30 @@ import { Message } from '../components/Message';
 import { Loader } from '../components/Loader';
 import { FormContainer } from '../components/FormContainer';
 
-import { asyncSignIn } from '../store/user';
+import { asyncSignUp } from '../store/user';
 import { StoreRootState } from '../store';
 
 import { isObjectEmpty } from '../utils/isObjectEmpty';
 
-export const SignInPage = () => {
+export const SignUpPage = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const { currentUser, isSignedIn, loading, error } = useSelector(
         (state: StoreRootState) => state.user
     );
+
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [message, setMessage] = useState<string | null>(null);
 
     const { search } = useLocation();
     const redirect: string = search ? search.split('=')[1] : '/';
 
     const onSubmitForm = (event: React.FormEvent<HTMLFontElement>) => {
         event.preventDefault();
-        dispatch(asyncSignIn({ email, password }));
+        dispatch(asyncSignUp({ name, email, password }));
         console.log(email, password);
     };
 
@@ -38,7 +42,7 @@ export const SignInPage = () => {
 
     return (
         <FormContainer>
-            <h1>Sign In</h1>
+            <h1>Sign Up</h1>
             {error && (
                 <Message variant="danger">
                     <span>{error}</span>
@@ -46,6 +50,16 @@ export const SignInPage = () => {
             )}
             {loading && <Loader />}
             <Form onSubmit={onSubmitForm}>
+                <Form.Group>
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        value={name}
+                        placeholder="Enter name"
+                        onChange={(event) => setName(event.target.value)}
+                    ></Form.Control>
+                </Form.Group>
+
                 <Form.Group>
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
@@ -65,20 +79,21 @@ export const SignInPage = () => {
                         onChange={(event) => setPassword(event.target.value)}
                     ></Form.Control>
                 </Form.Group>
-                <Button type="submit">Sign in</Button>
+
+                <Button type="submit">Sign Up</Button>
             </Form>
 
             <Row className="py-3">
                 <Col>
-                    New customer?{' '}
+                    Have a account?{' '}
                     <Link
                         to={
                             redirect
-                                ? `/signup?redirect=${redirect}`
-                                : '/signup'
+                                ? `/signin?redirect=${redirect}`
+                                : '/signin'
                         }
                     >
-                        Sign up
+                        Sign in
                     </Link>
                 </Col>
             </Row>

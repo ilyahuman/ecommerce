@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams, Link, useHistory } from 'react-router-dom';
 
 import { asyncAddCartProduct, asyncRemoveCartProduct } from '../store/cart';
-import { asyncSignIn } from '../store/user';
+import { asyncSignIn, asyncGetUser } from '../store/user';
 import { CartProduct } from '../types';
 import { StoreRootState } from '../store';
 
@@ -50,7 +50,7 @@ export const CartPage = () => {
     }, [dispatch, id, qty]);
 
     const onCheckoutHandler = () => {
-        history.push(`${AppRoutes.LOGIN}?redirect=shipping`);
+        history.push(`${AppRoutes.SIGNIN}?redirect=shipping`);
     };
 
     return (
@@ -148,14 +148,7 @@ export const CartPage = () => {
                                     {getProductTotalPrice(cartItems)}
                                 </Card.Subtitle>
                                 <Button
-                                    onClick={() =>
-                                        dispatch(
-                                            asyncSignIn({
-                                                email: 'admin@gmail.com',
-                                                password: '1234',
-                                            })
-                                        )
-                                    }
+                                    onClick={() => dispatch(asyncGetUser())}
                                     variant="secondary"
                                     size="lg"
                                     block

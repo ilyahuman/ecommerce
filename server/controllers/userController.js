@@ -37,7 +37,7 @@ export const signUp = asyncHandler(async (req, res) => {
 
 export const signIn = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    console.log(req);
+
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
@@ -65,6 +65,35 @@ export const getUser = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+        });
+    } else {
+        res.status(401);
+
+        throw new Error('User not found');
+    }
+});
+
+export const updateUser = asyncHandler(async (req, res) => {
+    const { id } = req.user;
+
+    const user = await User.findById(id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+
+        if (req.body.password) {
+            user.password = req.body.password;
+        }
+
+        const updatedUser = await user.save();
+
+        res.json({
+            id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+            token: generateToken(user._id),
         });
     } else {
         res.status(401);

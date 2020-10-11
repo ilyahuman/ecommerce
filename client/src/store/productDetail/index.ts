@@ -2,6 +2,9 @@ import { Dispatch } from 'redux';
 import axios from 'axios';
 import { Product } from '../../types/index';
 
+// Services
+import { ProductService } from '../../services/productService';
+
 /**
  * * Actions
  */
@@ -61,12 +64,10 @@ export const asyncGetProduct = (id: string) => async (
     try {
         dispatch(productRequest());
 
-        const response = await axios.get<Product>(
-            `http://localhost:5000/api/products/${id}`
-        );
+        const { data } = await ProductService.getProductById(id);
 
-        if (response.data) {
-            dispatch(productSuccess(response.data));
+        if (data) {
+            dispatch(productSuccess(data));
         }
     } catch (error) {
         dispatch(

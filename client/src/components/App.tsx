@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
+import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { AppRoutes } from '../config';
 
 import { Header } from './Header';
@@ -8,8 +10,8 @@ import { HomePage } from '../pages/HomePage';
 import { ProductPage } from '../pages/ProductPage';
 import { CartPage } from '../pages/CartPage';
 import { SignInPage } from '../pages/SignInPage';
-import { Container } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { SignUpPage } from '../pages/SignUpPage';
+import { UserPage } from '../pages/UserPage';
 import { asyncGetProducts } from '../store/productList';
 
 export const App: React.FC = (): JSX.Element => {
@@ -32,8 +34,12 @@ export const App: React.FC = (): JSX.Element => {
                                 component={HomePage}
                             />
                             <Route
-                                path={AppRoutes.LOGIN}
+                                path={AppRoutes.SIGNIN}
                                 component={SignInPage}
+                            />
+                            <Route
+                                path={AppRoutes.SIGNUP}
+                                component={SignUpPage}
                             />
                             <Route
                                 path={`${AppRoutes.PRODUCT}/:id`}
@@ -47,6 +53,10 @@ export const App: React.FC = (): JSX.Element => {
                                 exact
                                 path={`${AppRoutes.CART}`}
                                 component={CartPage}
+                            />
+                            <Route
+                                path={`${AppRoutes.PROFILE}`}
+                                component={UserPage}
                             />
                         </Switch>
                     </Container>
