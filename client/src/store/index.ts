@@ -6,6 +6,7 @@ import { productListReducer, ProductsState } from './productList';
 import { productDetailReducer, ProductDetailState } from './productDetail';
 import { cartReducer, CartState } from './cart';
 import { userReducer, UserState, isSignedIn } from './user';
+import { orderReducer, OrderState } from './order';
 
 import { CartProduct, User } from '../types';
 
@@ -14,6 +15,7 @@ export interface StoreRootState {
     productDetail: ProductDetailState;
     cart: CartState;
     user: UserState;
+    order: OrderState;
 }
 
 const reducers = combineReducers<StoreRootState>({
@@ -21,6 +23,7 @@ const reducers = combineReducers<StoreRootState>({
     productDetail: productDetailReducer,
     cart: cartReducer,
     user: userReducer,
+    order: orderReducer,
 });
 
 // type reducerType = typeof reducers;

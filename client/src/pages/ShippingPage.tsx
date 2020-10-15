@@ -13,7 +13,10 @@ import { User } from '../types';
 import { AppRoutes } from '../config';
 import { isObjectFull } from '../utils/isObjectEmpty';
 
+import { useCheckout } from '../hooks/useCheckout';
+
 export const ShippingPage = () => {
+    useCheckout();
     const dispatch = useDispatch();
     const history = useHistory();
     const {
@@ -35,6 +38,7 @@ export const ShippingPage = () => {
         history.push(AppRoutes.PAYMENT);
     };
 
+    // TODO types casting
     const onUpdateHandler = () => {
         dispatch(
             asyncUpdateUser({

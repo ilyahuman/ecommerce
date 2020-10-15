@@ -38,7 +38,6 @@ function getUser() {
 }
 
 function updateUser(user: User) {
-    debugger;
     return axiosInstance.put<User>(`http://localhost:5000/api/users/user`, {
         updateUser: user,
     });

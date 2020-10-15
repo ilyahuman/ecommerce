@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
+import { useHistory } from 'react-router-dom';
 import { AppRoutes } from '../../config';
 
 import { StoreRootState } from '../../store';
@@ -11,6 +12,7 @@ import { isObjectEmpty } from '../../utils/isObjectEmpty';
 
 export const Header = (): JSX.Element => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const { isSignedIn, currentUser } = useSelector(
         (state: StoreRootState) => state.user
     );
@@ -18,6 +20,7 @@ export const Header = (): JSX.Element => {
     const onSignOut = (event: React.MouseEvent) => {
         event.preventDefault();
         dispatch(asyncSignOut());
+        history.push(AppRoutes.HOME);
     };
 
     return (

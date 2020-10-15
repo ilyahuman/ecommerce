@@ -237,7 +237,6 @@ export const asyncUpdateUser = (userCreds: User) => async (
     getState: () => StoreRootState
 ) => {
     try {
-        debugger;
         dispatch(userPersonalUpdateRequest());
 
         const store = getState();

@@ -1,5 +1,5 @@
 import axios, { AxiosPromise } from 'axios';
-
+import { axiosInstance } from './axiosInstance';
 import { Product } from '../types';
 
 interface ProductService {
@@ -13,9 +13,11 @@ export const ProductService: ProductService = {
 };
 
 function getProducts() {
-    return axios.get<Product[]>('http://localhost:5000/api/products');
+    return axiosInstance.get<Product[]>('http://localhost:5000/api/products');
 }
 
 function getProductById(id: string) {
-    return axios.get<Product>(`http://localhost:5000/api/products/${id}`);
+    return axiosInstance.get<Product>(
+        `http://localhost:5000/api/products/${id}`
+    );
 }

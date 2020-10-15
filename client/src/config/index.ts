@@ -9,4 +9,5 @@ export enum AppRoutes {
     PAYMENT = '/payment',
     CHECKOUT = '/checkout',
     PLACE_ORDER = '/place_order',
+    ORDER_SUCCESS = '/order_success',
 }

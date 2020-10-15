@@ -11,7 +11,7 @@ export const authenticateToken = asyncHandler(async (req, res, next) => {
     if (!token) {
         res.status(401);
 
-        throw new Error('Invalid token!');
+        throw new Error('Unauthorized');
     }
 
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {

@@ -42,7 +42,7 @@ export const signIn = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    console.log(password);
+
     if (user && (await user.comparePassword(password))) {
         res.json({
             id: user._id,
@@ -92,7 +92,6 @@ export const updateUser = asyncHandler(async (req, res) => {
             delete updateUser['password'];
         }
 
-        console.log(user);
         const updatedUser = Object.assign(user, updateUser);
 
         updatedUser.save();

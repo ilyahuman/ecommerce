@@ -31,7 +31,6 @@ export const SignUpPage = () => {
     const onSubmitForm = (event: React.FormEvent<HTMLFontElement>) => {
         event.preventDefault();
         dispatch(asyncSignUp({ name, email, password }));
-        console.log(email, password);
     };
 
     useEffect(() => {

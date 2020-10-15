@@ -13,14 +13,18 @@ export const addOrderItems = asyncHandler(async (req, res) => {
     } = req.body;
     const { id } = req.user;
 
+    if (!id && !req.user) {
+        res.status(401);
+        throw new Error('Unauthorized!');
+    }
+
     if (orderItems && orderItems.length === 0) {
         res.status(400);
         throw new Error('There are no orders');
-
         return;
     }
 
-    const order = new Order({
+    const createdOrder = await Order.create({
         user: id,
         orderItems,
         shippingAddress,
@@ -31,7 +35,25 @@ export const addOrderItems = asyncHandler(async (req, res) => {
         totalPrice,
     });
 
-    const createdOrder = order.save();
+    res.status(201).json({
+        id: createdOrder._id,
+        orderItems: createdOrder.orderItems,
+        shippingAddress: createdOrder.shippingAddress,
+        paymentMethod: createdOrder.paymentMethod,
+        itemsPrice: createdOrder.itemsPrice,
+        taxPrice: createdOrder.taxPrice,
+        shippingPrice: createdOrder.shippingPrice,
+        totalPrice: createdOrder.totalPrice,
+        user: createdOrder.user,
+        isPlaced: createdOrder.isPlaced,
+    });
+});
 
-    res.status(201).json(createdOrder);
+export const getOrderById = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const order = await Order.findById(id).populate('user', 'name email');
+
+    if (order) {
+        res.status(200).send(order);
+    }
 });

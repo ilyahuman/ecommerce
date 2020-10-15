@@ -11,7 +11,7 @@ import { StoreRootState } from '../index';
 enum CartActionTypes {
     CART_ADD_PRODUCT = 'CART_ADD_PRODUCT',
     CART_REMOVE_PRODUCT = 'CART_REMOVE_PRODUCT',
-
+    CLEAR_CART = 'CLEAR_CART',
     CART_ADD_PAYMENT_METHOD = 'CART_ADD_PAYMENT_METHOD',
 }
 
@@ -30,7 +30,15 @@ interface CartAddPaymentMethod {
     payload: string;
 }
 
-type CartActions = CartAddProduct | CartRemoveProduct | CartAddPaymentMethod;
+interface ClearCartAction {
+    type: CartActionTypes.CLEAR_CART;
+}
+
+type CartActions =
+    | CartAddProduct
+    | CartRemoveProduct
+    | CartAddPaymentMethod
+    | ClearCartAction;
 
 const cartAddProduct = function (product: CartProduct): CartActions {
     return {
@@ -52,6 +60,12 @@ export const cartAddPaymentMethod = function (
     return {
         type: CartActionTypes.CART_ADD_PAYMENT_METHOD,
         payload: paymentMethod,
+    };
+};
+
+const clearCart = function (): CartActions {
+    return {
+        type: CartActionTypes.CLEAR_CART,
     };
 };
 
@@ -122,6 +136,17 @@ export const asyncRemoveCartProduct = (id: string) => async (
     }
 };
 
+export const asyncClearCart = () => async (dispatch: Dispatch<CartActions>) => {
+    try {
+        dispatch(clearCart());
+
+        localStorage.removeItem('cartItems');
+        localStorage.removeItem('paymentMethod');
+    } catch (error) {
+        console.error(error.message);
+    }
+};
+
 /**
  * * Reducer
  *
@@ -175,6 +200,8 @@ export const cartReducer = (
                 ...state,
                 paymentMethod: action.payload,
             };
+        case CartActionTypes.CLEAR_CART:
+            return cartState;
         default:
             return state;
     }

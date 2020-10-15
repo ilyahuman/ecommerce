@@ -10,7 +10,7 @@ import {
     Table,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { CartProduct } from '../types';
+import { CartProduct, Order } from '../types';
 import { AppRoutes } from '../config';
 
 import { Message } from '../components/Message';
@@ -19,8 +19,12 @@ import { CheckoutSteps } from '../components/CheckoutSteps';
 import { useSummary } from '../hooks/useSummary';
 
 import { StoreRootState } from '../store';
+import { asyncOrderCreate } from '../store/order';
+import { asyncClearCart } from '../store/cart';
+import { useCheckout } from '../hooks/useCheckout';
 
 export const PlaceOrderPage = () => {
+    useCheckout();
     const dispatch = useDispatch();
     const history = useHistory();
     const {
@@ -30,12 +34,33 @@ export const PlaceOrderPage = () => {
     const { cartItems, paymentMethod } = useSelector(
         (state: StoreRootState) => state.cart
     );
+    const { lastOrder } = useSelector((state: StoreRootState) => state.order);
 
     const [itemsPrice, shippingPrice, taxPrice, totalPrice] = useSummary(
         cartItems
     );
 
-    const onPlaceOrderHandler = () => {};
+    useEffect(() => {
+        if (lastOrder && lastOrder.isPlaced) {
+            dispatch(asyncClearCart());
+            history.push('/order_success');
+        }
+    }, [lastOrder]);
+
+    // TODO types casting
+    const onPlaceOrderHandler = () => {
+        dispatch(
+            asyncOrderCreate({
+                orderItems: cartItems,
+                shippingAddress: shippingAddress,
+                paymentMethod,
+                itemsPrice,
+                shippingPrice,
+                taxPrice,
+                totalPrice,
+            } as Order)
+        );
+    };
 
     return (
         <>

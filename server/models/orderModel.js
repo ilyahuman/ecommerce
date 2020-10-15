@@ -1,29 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
-const OrderItemSchema = new Schema({
-    name: { type: String, required: true },
-    qty: { type: Number, required: true },
-    image: { type: String, required: true },
-    price: { type: Number, required: true },
-    product: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'Product',
-    },
-});
-
-const PaymentResultSchema = new Schema({
-    id: {
-        type: String,
-    },
-    status: {
-        type: String,
-    },
-    update_item: { type: String },
-    email_address: { type: String },
-});
-
+// TODO orderItems id field should have 'product' name
 export const OrderSchema = new Schema(
     {
         user: {
@@ -31,11 +9,19 @@ export const OrderSchema = new Schema(
             required: true,
             ref: 'User',
         },
-        orderItems: [OrderItemSchema],
-        password: {
-            type: String,
-            required: true,
-        },
+        orderItems: [
+            {
+                name: { type: String, required: true },
+                qty: { type: Number, required: true },
+                image: { type: String, required: true },
+                price: { type: Number, required: true },
+                id: {
+                    type: Schema.Types.ObjectId,
+                    required: true,
+                    ref: 'Product',
+                },
+            },
+        ],
         shippingAddress: {
             address: {
                 type: String,
@@ -58,7 +44,16 @@ export const OrderSchema = new Schema(
             type: String,
             required: true,
         },
-        paymentResult: PaymentResultSchema,
+        paymentResult: {
+            id: {
+                type: String,
+            },
+            status: {
+                type: String,
+            },
+            update_item: { type: String },
+            email_address: { type: String },
+        },
         taxPrice: {
             type: Number,
             required: true,
@@ -84,6 +79,11 @@ export const OrderSchema = new Schema(
             required: true,
             default: false,
         },
+        isPlaced: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
         paidAt: {
             type: Date,
         },
@@ -95,5 +95,9 @@ export const OrderSchema = new Schema(
         timestamps: true,
     }
 );
+
+OrderSchema.post('save', async function () {
+    this.isPlaced = true;
+});
 
 export const Order = mongoose.model('Order', OrderSchema);

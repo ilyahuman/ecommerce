@@ -21,7 +21,7 @@ import { UserPage } from '../pages/UserPage';
 import { ShippingPage } from '../pages/ShippingPage';
 import { PaymentPage } from '../pages/PaymentPage';
 import { PlaceOrderPage } from '../pages/PlaceOrderPage';
-import { CheckoutSteps } from './CheckoutSteps';
+import { OrderSuccess } from '../pages/OrderSuccess';
 
 import { asyncGetProducts } from '../store/productList';
 import { StoreRootState } from '../store';
@@ -107,6 +107,10 @@ export const App: React.FC = (): JSX.Element => {
                             <PrivateRoute
                                 path={`${AppRoutes.PLACE_ORDER}`}
                                 component={PlaceOrderPage}
+                            />
+                            <PrivateRoute
+                                path={`${AppRoutes.ORDER_SUCCESS}`}
+                                component={OrderSuccess}
                             />
                             <PrivateRoute
                                 path={`${AppRoutes.PROFILE}`}

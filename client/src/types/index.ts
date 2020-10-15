@@ -53,3 +53,15 @@ export interface User {
     shippingAddress: ShippingAddress;
     password?: string;
 }
+
+export interface Order {
+    id?: string;
+    user?: string;
+    orderItems: CartProduct[];
+    shippingAddress: ShippingAddress;
+    itemsPrice: number;
+    shippingPrice: number;
+    taxPrice: number;
+    totalPrice: number;
+    isPlaced?: boolean;
+}

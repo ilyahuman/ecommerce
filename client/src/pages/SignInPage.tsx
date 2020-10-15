@@ -27,7 +27,6 @@ export const SignInPage = () => {
     const onSubmitForm = (event: React.FormEvent<HTMLFontElement>) => {
         event.preventDefault();
         dispatch(asyncSignIn({ email, password }));
-        console.log(email, password);
     };
 
     const redirectPageAfterSignIn = () => {

@@ -11,6 +11,7 @@ import { asyncCartAddPaymentMethod } from '../store/cart';
 
 import { isObjectFull } from '../utils/isObjectEmpty';
 import { AppRoutes } from '../config';
+import { useCheckout } from '../hooks/useCheckout';
 
 interface PaymentMethod {
     name: string;
@@ -21,6 +22,7 @@ interface PaymentMethod {
 }
 
 export const PaymentPage = () => {
+    useCheckout();
     const dispatch = useDispatch();
     const history = useHistory();
     const {
@@ -62,9 +64,6 @@ export const PaymentPage = () => {
         setPaymentMethod(paymentMethods[0].value);
     }, []);
 
-    useEffect(() => {
-        console.log(paymentMethod);
-    }, [paymentMethod]);
     return (
         <FormContainer>
             <CheckoutSteps step1 step2 />
