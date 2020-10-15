@@ -22,6 +22,24 @@ export const UserSchema = new Schema(
             required: true,
             default: false,
         },
+        shippingAddress: {
+            address: {
+                type: String,
+                default: '',
+            },
+            city: {
+                type: String,
+                default: '',
+            },
+            postalCode: {
+                type: String,
+                default: '',
+            },
+            country: {
+                type: String,
+                default: '',
+            },
+        },
     },
     {
         timestamps: true,

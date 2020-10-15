@@ -5,7 +5,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { productListReducer, ProductsState } from './productList';
 import { productDetailReducer, ProductDetailState } from './productDetail';
 import { cartReducer, CartState } from './cart';
-import { signInReducer, UserState, isSignedIn } from './user';
+import { userReducer, UserState, isSignedIn } from './user';
 
 import { CartProduct, User } from '../types';
 
@@ -20,7 +20,7 @@ const reducers = combineReducers<StoreRootState>({
     products: productListReducer,
     productDetail: productDetailReducer,
     cart: cartReducer,
-    user: signInReducer,
+    user: userReducer,
 });
 
 // type reducerType = typeof reducers;
@@ -28,11 +28,12 @@ const reducers = combineReducers<StoreRootState>({
 
 const middlewares = [thunk];
 
-// @ts-ignore-start
 let persistCartItems = localStorage.getItem('cartItems');
 let persistUser = localStorage.getItem('user');
+let persistPaymentMethod = localStorage.getItem('paymentMethod');
 let cartItems: CartProduct[] = [];
 let currentUser: User = {} as User;
+let paymentMethod: string = '';
 
 if (persistCartItems) {
     cartItems = JSON.parse(persistCartItems);
@@ -42,11 +43,16 @@ if (persistUser) {
     currentUser = JSON.parse(persistUser);
 }
 
+if (persistPaymentMethod) {
+    paymentMethod = JSON.parse(persistPaymentMethod);
+}
+
 // TODO Types for initial state
 
 const initialState = {
     cart: {
         cartItems,
+        paymentMethod: paymentMethod || null,
     },
     user: {
         currentUser: currentUser,
@@ -55,7 +61,6 @@ const initialState = {
         isSignedIn: isSignedIn(),
     },
 };
-// @ts-ignore-end
 
 export const store = createStore(
     reducers,

@@ -3,8 +3,11 @@ import {
     UserSignInRequest,
     User,
     UserSignUpRequest,
-    UserUpdateRequest,
+    UserPersonalUpdateRequest,
+    ShippingAddress,
 } from '../../types';
+
+import { StoreRootState } from '../index';
 
 // Utils
 import { history } from '../../utils/history';
@@ -17,23 +20,23 @@ import { AuthService } from '../../services/userService';
  */
 
 enum UserActionTypes {
-    SIGNIN_REQUEST,
-    SIGNIN_SUCCESS,
-    SIGNIN_FAILED,
+    SIGNIN_REQUEST = 'SIGNIN_REQUEST',
+    SIGNIN_SUCCESS = 'SIGNIN_SUCCESS',
+    SIGNIN_FAILED = 'SIGNIN_FAILED',
 
-    SIGNUP_REQUEST,
-    SIGNUP_FAILED,
+    SIGNUP_REQUEST = 'SIGNUP_REQUEST',
+    SIGNUP_FAILED = 'SIGNUP_FAILED',
 
-    USER_DETAILS_REQUEST,
-    USER_DETAILS_SUCCESS,
-    USER_DETAILS_FAILED,
+    USER_DETAILS_REQUEST = 'USER_DETAILS_REQUEST',
+    USER_DETAILS_SUCCESS = 'USER_DETAILS_SUCCESS',
+    USER_DETAILS_FAILED = 'USER_DETAILS_FAILED',
 
-    USER_UPDATE_REQUEST,
-    USER_UPDATE_SUCCESS,
-    USER_UPDATE_FAILED,
+    USER_UPDATE_REQUEST = 'USER_UPDATE_REQUEST',
+    USER_UPDATE_SUCCESS = 'USER_UPDATE_SUCCESS',
+    USER_UPDATE_FAILED = 'USER_UPDATE_FAILED',
 
-    SIGNOUT_USER,
-    CLEAR_ERROR,
+    USER_SIGNOUT = 'USER_SIGNOUT',
+    CLEAR_ERROR = 'CLEAR_ERROR',
 }
 
 interface SignInRequestAction {
@@ -60,14 +63,14 @@ interface SignUpFailedAction {
 }
 
 interface SignOutUserAction {
-    type: UserActionTypes.SIGNOUT_USER;
+    type: UserActionTypes.USER_SIGNOUT;
 }
 
 interface ClearErrorAction {
     type: UserActionTypes.CLEAR_ERROR;
 }
 
-interface UserUpdateRequestAction {
+interface UserPersonalUpdateRequestAction {
     type: UserActionTypes.USER_UPDATE_REQUEST;
 }
 
@@ -85,7 +88,7 @@ type UserActions =
     | SignInRequestAction
     | SignInSuccessAction
     | SignInFailedAction
-    | UserUpdateRequestAction
+    | UserPersonalUpdateRequestAction
     | UserUpdateSuccessAction
     | UserUpdateFailedAction
     | SignUpRequestAction
@@ -126,29 +129,29 @@ const signUpFailed = function (error: string): UserActions {
     };
 };
 
-const userUpdateRequest = function (): UserActions {
+const userPersonalUpdateRequest = function (): UserActions {
     return {
-        type: UserActionTypes.SIGNIN_REQUEST,
+        type: UserActionTypes.USER_UPDATE_REQUEST,
     };
 };
 
 const userUpdateSuccess = function (user: User): UserActions {
     return {
-        type: UserActionTypes.SIGNIN_SUCCESS,
+        type: UserActionTypes.USER_UPDATE_SUCCESS,
         payload: user,
     };
 };
 
 const userUpdateFailed = function (error: string): UserActions {
     return {
-        type: UserActionTypes.SIGNIN_FAILED,
+        type: UserActionTypes.USER_UPDATE_FAILED,
         payload: error,
     };
 };
 
 const signOutUser = function (): UserActions {
     return {
-        type: UserActionTypes.SIGNOUT_USER,
+        type: UserActionTypes.USER_SIGNOUT,
     };
 };
 
@@ -229,18 +232,29 @@ export const asyncSignOut = () => async (dispatch: Dispatch<UserActions>) => {
     // await dispatch(removeCart());
 };
 
-export const asyncUpdateUser = (userCreds: UserUpdateRequest) => async (
-    dispatch: Dispatch<UserActions>
+export const asyncUpdateUser = (userCreds: User) => async (
+    dispatch: Dispatch<UserActions>,
+    getState: () => StoreRootState
 ) => {
     try {
-        dispatch(userUpdateRequest());
+        debugger;
+        dispatch(userPersonalUpdateRequest());
 
-        const { data } = await AuthService.updateUser(userCreds);
+        const store = getState();
+        const {
+            user: { currentUser },
+        } = store;
+
+        const { data } = await AuthService.updateUser(
+            Object.assign({}, currentUser, userCreds)
+        );
 
         if (data) {
-            dispatch(userUpdateSuccess(data));
+            const userUpdated = Object.assign({}, currentUser, data);
 
-            localStorage.setItem('user', JSON.stringify(data));
+            dispatch(userUpdateSuccess(userUpdated));
+
+            localStorage.setItem('user', JSON.stringify(userUpdated));
         }
     } catch (error) {
         dispatch(
@@ -279,7 +293,19 @@ export interface UserState {
 export const isSignedIn = (): boolean => !!localStorage.getItem('user');
 
 const userState: UserState = {
-    currentUser: {} as User,
+    currentUser: {
+        id: '',
+        email: '',
+        name: '',
+        isAdmin: false,
+        token: '',
+        shippingAddress: {
+            city: '',
+            address: '',
+            country: '',
+            postalCode: '',
+        },
+    },
     loading: false,
     error: '',
     isSignedIn: isSignedIn(),
@@ -293,61 +319,41 @@ const userState: UserState = {
  * @param state
  * @param action
  */
-export const signInReducer = (
+export const userReducer = (
     state: UserState = userState,
     action: UserActions
 ): UserState => {
     switch (action.type) {
         case UserActionTypes.SIGNIN_REQUEST:
-            return {
-                ...state,
-                loading: true,
-            };
-        case UserActionTypes.SIGNIN_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                error: null,
-                isSignedIn: true,
-                currentUser: Object.assign({}, action.payload),
-            };
-        case UserActionTypes.SIGNIN_FAILED:
-            return {
-                ...state,
-                loading: false,
-                error: action.payload,
-            };
         case UserActionTypes.SIGNUP_REQUEST:
-            return {
-                ...state,
-                loading: true,
-            };
-        case UserActionTypes.SIGNUP_FAILED:
-            return {
-                ...state,
-                loading: false,
-                error: action.payload,
-            };
         case UserActionTypes.USER_UPDATE_REQUEST:
             return {
                 ...state,
                 loading: true,
             };
+        case UserActionTypes.SIGNIN_SUCCESS:
         case UserActionTypes.USER_UPDATE_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 error: null,
                 isSignedIn: true,
-                currentUser: Object.assign({}, action.payload),
+                currentUser: Object.assign(
+                    {},
+                    state.currentUser,
+                    action.payload
+                ),
             };
+
+        case UserActionTypes.SIGNIN_FAILED:
         case UserActionTypes.USER_UPDATE_FAILED:
+        case UserActionTypes.SIGNUP_FAILED:
             return {
                 ...state,
                 loading: false,
                 error: action.payload,
             };
-        case UserActionTypes.SIGNOUT_USER:
+        case UserActionTypes.USER_SIGNOUT:
             return {
                 ...state,
                 currentUser: {} as User,

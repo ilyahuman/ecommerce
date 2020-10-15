@@ -40,6 +40,7 @@ export const CartPage = () => {
     const { id } = useParams<{ id: string }>();
     const { search } = useLocation<{ qty: string }>();
     const qty: number = parseInt(search.split('=')[1]);
+    const { isSignedIn } = useSelector((state: StoreRootState) => state.user);
 
     const { cartItems } = useSelector((state: StoreRootState) => state.cart);
 
@@ -50,7 +51,10 @@ export const CartPage = () => {
     }, [dispatch, id, qty]);
 
     const onCheckoutHandler = () => {
-        history.push(`${AppRoutes.SIGNIN}?redirect=shipping`);
+        const route = isSignedIn
+            ? AppRoutes.SHIPPING
+            : `${AppRoutes.SIGNIN}?redirect=shipping`;
+        history.push(route);
     };
 
     return (
@@ -148,7 +152,7 @@ export const CartPage = () => {
                                     {getProductTotalPrice(cartItems)}
                                 </Card.Subtitle>
                                 <Button
-                                    onClick={() => dispatch(asyncGetUser())}
+                                    onClick={onCheckoutHandler}
                                     variant="secondary"
                                     size="lg"
                                     block

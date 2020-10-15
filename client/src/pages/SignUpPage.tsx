@@ -15,7 +15,7 @@ import { isObjectEmpty } from '../utils/isObjectEmpty';
 export const SignUpPage = () => {
     const dispatch = useDispatch();
     const history = useHistory();
-    const { currentUser, isSignedIn, loading, error } = useSelector(
+    const { isSignedIn, loading, error } = useSelector(
         (state: StoreRootState) => state.user
     );
 
@@ -35,10 +35,10 @@ export const SignUpPage = () => {
     };
 
     useEffect(() => {
-        if (!isObjectEmpty(currentUser)) {
+        if (isSignedIn) {
             history.push(redirect);
         }
-    }, [history, isSignedIn, redirect]);
+    }, [isSignedIn]);
 
     return (
         <FormContainer>

@@ -11,6 +11,8 @@ import { StoreRootState } from '../index';
 enum CartActionTypes {
     CART_ADD_PRODUCT = 'CART_ADD_PRODUCT',
     CART_REMOVE_PRODUCT = 'CART_REMOVE_PRODUCT',
+
+    CART_ADD_PAYMENT_METHOD = 'CART_ADD_PAYMENT_METHOD',
 }
 
 interface CartAddProduct {
@@ -23,7 +25,12 @@ interface CartRemoveProduct {
     payload: string;
 }
 
-type CartActions = CartAddProduct | CartRemoveProduct;
+interface CartAddPaymentMethod {
+    type: CartActionTypes.CART_ADD_PAYMENT_METHOD;
+    payload: string;
+}
+
+type CartActions = CartAddProduct | CartRemoveProduct | CartAddPaymentMethod;
 
 const cartAddProduct = function (product: CartProduct): CartActions {
     return {
@@ -36,6 +43,15 @@ const cartRemoveProduct = function (id: string): CartActions {
     return {
         type: CartActionTypes.CART_REMOVE_PRODUCT,
         payload: id,
+    };
+};
+
+export const cartAddPaymentMethod = function (
+    paymentMethod: string
+): CartActions {
+    return {
+        type: CartActionTypes.CART_ADD_PAYMENT_METHOD,
+        payload: paymentMethod,
     };
 };
 
@@ -74,6 +90,22 @@ export const asyncAddCartProduct = (id: string, qty: number) => async (
     }
 };
 
+export const asyncCartAddPaymentMethod = (paymentMethod: string) => async (
+    dispatch: Dispatch<CartActions>,
+    getState: () => StoreRootState
+) => {
+    try {
+        dispatch(cartAddPaymentMethod(paymentMethod));
+
+        localStorage.setItem(
+            'paymentMethod',
+            JSON.stringify(getState().cart.paymentMethod)
+        );
+    } catch (error) {
+        console.error(error.message);
+    }
+};
+
 export const asyncRemoveCartProduct = (id: string) => async (
     dispatch: Dispatch<CartActions>,
     getState: () => StoreRootState
@@ -99,10 +131,12 @@ export const asyncRemoveCartProduct = (id: string) => async (
 
 export interface CartState {
     cartItems: CartProduct[];
+    paymentMethod: string | null;
 }
 
 const cartState: CartState = {
     cartItems: [],
+    paymentMethod: null,
 };
 
 export const cartReducer = (
@@ -135,6 +169,11 @@ export const cartReducer = (
                 cartItems: state.cartItems.filter(
                     (product: CartProduct) => action.payload !== product.id
                 ),
+            };
+        case CartActionTypes.CART_ADD_PAYMENT_METHOD:
+            return {
+                ...state,
+                paymentMethod: action.payload,
             };
         default:
             return state;

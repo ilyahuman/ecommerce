@@ -5,8 +5,9 @@ import { connectToDb } from './db/index.js';
 import { notFound, errorHandler } from './middleware/error.js';
 
 // routes
-import { productRouter } from './routes/productRoutes.js';
-import { userRouter } from './routes/userRoutes.js';
+import { router as productRouter } from './routes/productRoutes.js';
+import { router as userRouter } from './routes/userRoutes.js';
+import { router as orderRouter } from './routes/orderRoutes.js';
 
 const app = new App().app;
 
@@ -16,6 +17,8 @@ const main = async () => {
     app.use('/api/products', productRouter);
 
     app.use('/api/users/', userRouter);
+
+    app.use('/api/orders/', orderRouter);
 
     app.use(notFound);
 

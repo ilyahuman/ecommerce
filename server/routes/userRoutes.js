@@ -7,13 +7,13 @@ import {
 } from '../controllers/userController.js';
 import { authenticateToken } from '../middleware/authenticateToken.js';
 
-export const userRouter = express.Router();
+export const router = express.Router();
 
-userRouter.post('/signin', signIn);
+router.post('/signin', signIn);
 
-userRouter.post('/', signUp);
+router.post('/', signUp);
 
-userRouter
+router
     .route('/user')
     .get(authenticateToken, getUser)
     .put(authenticateToken, updateUser);

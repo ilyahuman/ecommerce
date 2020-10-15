@@ -44,17 +44,12 @@ export const Header = (): JSX.Element => {
                                 >
                                     <LinkContainer to={AppRoutes.PROFILE}>
                                         <NavDropdown.Item>
+                                            <i className="fas fa-user"></i>{' '}
                                             {currentUser.name}
                                         </NavDropdown.Item>
                                     </LinkContainer>
-                                    <LinkContainer to={AppRoutes.CART}>
-                                        <NavDropdown.Item>
-                                            <i className="fas fa-user"></i>{' '}
-                                            Profile
-                                        </NavDropdown.Item>
-                                    </LinkContainer>
                                     <NavDropdown.Item onClick={onSignOut}>
-                                        <i className="fas fa-user"></i> Sign Out
+                                        Sign Out
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (

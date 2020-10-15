@@ -20,8 +20,8 @@ export const SignInPage = () => {
     );
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
     const { search } = useLocation();
+
     const redirect: string = search ? search.split('=')[1] : '/';
 
     const onSubmitForm = (event: React.FormEvent<HTMLFontElement>) => {
@@ -30,11 +30,15 @@ export const SignInPage = () => {
         console.log(email, password);
     };
 
-    useEffect(() => {
-        if (!isObjectEmpty(currentUser)) {
+    const redirectPageAfterSignIn = () => {
+        if (isSignedIn) {
             history.push(redirect);
         }
-    }, [history, isSignedIn, redirect]);
+    };
+
+    useEffect(() => {
+        redirectPageAfterSignIn();
+    }, [isSignedIn]);
 
     return (
         <FormContainer>

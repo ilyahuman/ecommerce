@@ -31,10 +31,17 @@ export interface UserSignUpRequest {
     password: string;
 }
 
-export interface UserUpdateRequest {
+export interface UserPersonalUpdateRequest {
     name?: string;
     email?: string;
     password?: string;
+}
+
+export interface ShippingAddress {
+    city: string;
+    address: string;
+    country: string;
+    postalCode: string;
 }
 
 export interface User {
@@ -43,4 +50,6 @@ export interface User {
     name: string;
     isAdmin: boolean;
     token: string;
+    shippingAddress: ShippingAddress;
+    password?: string;
 }

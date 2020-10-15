@@ -8,7 +8,7 @@ export const connectToDb = async () => {
             useCreateIndex: true,
             useUnifiedTopology: true,
         });
-        console.log('you have successfully connected to database');
+        console.log('You have successfully connected to database');
     } catch (e) {
         console.log(e);
         throw e;

@@ -1,7 +1,11 @@
 import asyncHandler from 'express-async-handler';
-import bcrypt from 'bcryptjs';
 import { User } from '../models/userModel.js';
 import { generateToken } from '../utils/generateToken.js';
+
+/**
+ * TODO Need to change logic of signin\signup response and return just a token.
+ * TODO But after authorization make a second request getUser and obtain user info by JWT id and set response into redux
+ */
 
 export const signUp = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
@@ -26,7 +30,6 @@ export const signUp = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
-            token: generateToken(user._id),
         });
     } else {
         res.status(400);
@@ -39,7 +42,7 @@ export const signIn = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-
+    console.log(password);
     if (user && (await user.comparePassword(password))) {
         res.json({
             id: user._id,
@@ -47,6 +50,12 @@ export const signIn = asyncHandler(async (req, res) => {
             email: user.email,
             isAdmin: user.isAdmin,
             token: generateToken(user._id),
+            shippingAddress: {
+                address: user.shippingAddress.address,
+                city: user.shippingAddress.city,
+                postalCode: user.shippingAddress.postalCode,
+                country: user.shippingAddress.country,
+            },
         });
     } else {
         res.status(401);
@@ -75,26 +84,44 @@ export const getUser = asyncHandler(async (req, res) => {
 
 export const updateUser = asyncHandler(async (req, res) => {
     const { id } = req.user;
-
+    const { updateUser } = req.body;
     const user = await User.findById(id);
 
     if (user) {
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
-
-        if (req.body.password) {
-            user.password = req.body.password;
+        if (!updateUser.password) {
+            delete updateUser['password'];
         }
 
-        const updatedUser = await user.save();
+        console.log(user);
+        const updatedUser = Object.assign(user, updateUser);
+
+        updatedUser.save();
 
         res.json({
             id: updatedUser._id,
             name: updatedUser.name,
             email: updatedUser.email,
             isAdmin: updatedUser.isAdmin,
-            token: generateToken(user._id),
+            shippingAddress: updatedUser.shippingAddress,
         });
+        // await User.findByIdAndUpdate(
+        //     id,
+        //     Object.assign(user, updateUser),
+        //     { new: true },
+        //     function (error, result) {
+        //         if (error) {
+        //             // handle error
+        //         } else {
+        //             res.json({
+        //                 id: result._id,
+        //                 name: result.name,
+        //                 email: result.email,
+        //                 isAdmin: result.isAdmin,
+        //                 shippingAddress: result.shippingAddress,
+        //             });
+        //         }
+        //     }
+        // );
     } else {
         res.status(401);
 

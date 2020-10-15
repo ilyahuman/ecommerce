@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StoreRootState } from '../store';
 import { asyncUpdateUser } from '../store/user';
 import { Message } from '../components/Message';
+import { User } from '../types';
 
 export const UserPage = () => {
     const dispatch = useDispatch();
@@ -20,22 +21,12 @@ export const UserPage = () => {
     const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const updateDate = {
-            email,
-            name,
-            password,
-        };
-
-        if (currentUser.name === name && currentUser.email === email) {
-            return setMessage('The same data');
-        }
-
         dispatch(
             asyncUpdateUser({
                 email,
                 name,
                 password,
-            })
+            } as User)
         );
 
         setPassword('');
@@ -66,6 +57,7 @@ export const UserPage = () => {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                     onChange={(event) => setPassword(event.target.value)}
+                    value={password}
                     type="password"
                 />
             </Form.Group>
