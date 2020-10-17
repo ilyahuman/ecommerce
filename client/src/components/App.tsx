@@ -1,4 +1,4 @@
-import React, { useEffect, ComponentClass, FC } from 'react';
+import React from 'react';
 import { Container } from 'react-bootstrap';
 import {
     BrowserRouter as Router,
@@ -6,8 +6,7 @@ import {
     Route,
     Redirect,
 } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
+import { useSelector } from 'react-redux';
 import { AppRoutes } from '../config';
 
 import { Header } from './Header';
@@ -22,6 +21,7 @@ import { ShippingPage } from '../pages/ShippingPage';
 import { PaymentPage } from '../pages/PaymentPage';
 import { PlaceOrderPage } from '../pages/PlaceOrderPage';
 import { OrderSuccess } from '../pages/OrderSuccess';
+import { OrderDetails } from '../pages/OrderDetails';
 
 import { asyncGetProducts } from '../store/productList';
 import { StoreRootState } from '../store';
@@ -58,12 +58,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 };
 
 export const App: React.FC = (): JSX.Element => {
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(asyncGetProducts());
-    }, [dispatch]);
-
     return (
         <div className="App">
             <Router>
@@ -111,6 +105,10 @@ export const App: React.FC = (): JSX.Element => {
                             <PrivateRoute
                                 path={`${AppRoutes.ORDER_SUCCESS}`}
                                 component={OrderSuccess}
+                            />
+                            <PrivateRoute
+                                path={`${AppRoutes.ORDER_DETAILS}/:id`}
+                                component={OrderDetails}
                             />
                             <PrivateRoute
                                 path={`${AppRoutes.PROFILE}`}

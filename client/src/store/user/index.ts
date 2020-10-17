@@ -8,6 +8,8 @@ import {
 } from '../../types';
 
 import { StoreRootState } from '../index';
+import { asyncCartReset } from '../cart';
+import { asyncOrderReset } from '../order';
 
 // Utils
 import { history } from '../../utils/history';
@@ -219,11 +221,14 @@ export const asyncSignUp = (userCreds: UserSignUpRequest) => async (
 export const asyncSignOut = () => async (dispatch: Dispatch<UserActions>) => {
     // ? Here we can revoke token ?
 
-    // Remove token from local storage and Redux.
+    // * Remove user and token from local storage and Redux.
     dispatch(signOutUser());
     localStorage.removeItem('user');
-    history.push('/');
-    //await dispatch(actions.reset());
+    // * Clean cart and orders from local storage and Redux.
+    // @ts-ignore
+    dispatch(asyncCartReset());
+    // @ts-ignore
+    dispatch(asyncOrderReset());
     //await clearCheckoutDataFromStorage();
 
     // Now that we're signed out, forget the old (customer) cart.

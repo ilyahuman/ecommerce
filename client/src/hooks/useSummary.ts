@@ -5,16 +5,21 @@ import { CartProduct } from '../types';
 import { addDecimals } from '../utils/addDecimals';
 
 export const useSummary = (cart: CartProduct[]) => {
+    // add consts
     const [itemsPrice, setItemsPrice] = useState<number>();
     const [shippingPrice, setShippingPrice] = useState<number>();
     const [taxPrice, setTaxPrice] = useState<number>();
     const [totalPrice, setTotalPrice] = useState<number>();
 
     const itemsPriceCalc = (cart: CartProduct[]): number => {
-        return cart.reduce(
-            (acc: number, current: CartProduct) =>
-                acc + current.qty * current.price,
-            0
+        return Number(
+            cart
+                .reduce(
+                    (acc: number, current: CartProduct) =>
+                        acc + current.qty * current.price,
+                    0
+                )
+                .toFixed(2)
         );
     };
 
@@ -35,20 +40,22 @@ export const useSummary = (cart: CartProduct[]) => {
 
     useEffect(() => {
         setItemsPrice(itemsPriceCalc(cart));
+    }, [cart]);
 
-        if (itemsPrice) {
-            setShippingPrice(shippingPriceCalc(itemsPrice as number));
-            setTaxPrice(taxPriceCalc(itemsPrice as number));
-        }
+    useEffect(() => {
+        setShippingPrice(shippingPriceCalc(itemsPrice as number));
+        setTaxPrice(taxPriceCalc(itemsPrice as number));
+    }, [itemsPrice]);
 
-        if (
-            itemsPrice !== undefined &&
-            shippingPrice !== undefined &&
-            taxPrice !== undefined
-        ) {
-            setTotalPrice(totalPriceCalc(itemsPrice, shippingPrice, taxPrice));
-        }
-    }, [cart, itemsPrice, shippingPrice, taxPrice]);
+    useEffect(() => {
+        setTotalPrice(
+            totalPriceCalc(
+                itemsPrice as number,
+                shippingPrice as number,
+                taxPrice as number
+            )
+        );
+    }, [itemsPrice, shippingPrice, taxPrice]);
 
     return [itemsPrice, shippingPrice, taxPrice, totalPrice];
 };

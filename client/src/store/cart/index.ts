@@ -11,7 +11,7 @@ import { StoreRootState } from '../index';
 enum CartActionTypes {
     CART_ADD_PRODUCT = 'CART_ADD_PRODUCT',
     CART_REMOVE_PRODUCT = 'CART_REMOVE_PRODUCT',
-    CLEAR_CART = 'CLEAR_CART',
+    CART_RESET = 'CART_RESET',
     CART_ADD_PAYMENT_METHOD = 'CART_ADD_PAYMENT_METHOD',
 }
 
@@ -30,15 +30,15 @@ interface CartAddPaymentMethod {
     payload: string;
 }
 
-interface ClearCartAction {
-    type: CartActionTypes.CLEAR_CART;
+interface CartResetAction {
+    type: CartActionTypes.CART_RESET;
 }
 
 type CartActions =
     | CartAddProduct
     | CartRemoveProduct
     | CartAddPaymentMethod
-    | ClearCartAction;
+    | CartResetAction;
 
 const cartAddProduct = function (product: CartProduct): CartActions {
     return {
@@ -63,9 +63,9 @@ export const cartAddPaymentMethod = function (
     };
 };
 
-const clearCart = function (): CartActions {
+const cartReset = function (): CartActions {
     return {
-        type: CartActionTypes.CLEAR_CART,
+        type: CartActionTypes.CART_RESET,
     };
 };
 
@@ -136,9 +136,9 @@ export const asyncRemoveCartProduct = (id: string) => async (
     }
 };
 
-export const asyncClearCart = () => async (dispatch: Dispatch<CartActions>) => {
+export const asyncCartReset = () => async (dispatch: Dispatch<CartActions>) => {
     try {
-        dispatch(clearCart());
+        dispatch(cartReset());
 
         localStorage.removeItem('cartItems');
         localStorage.removeItem('paymentMethod');
@@ -200,7 +200,7 @@ export const cartReducer = (
                 ...state,
                 paymentMethod: action.payload,
             };
-        case CartActionTypes.CLEAR_CART:
+        case CartActionTypes.CART_RESET:
             return cartState;
         default:
             return state;

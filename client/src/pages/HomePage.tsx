@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { Product } from '../types';
 import { ProductCard } from '../components/ProductCard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../components/Loader';
 import { Message } from '../components/Message';
 
 import { StoreRootState } from '../store';
+import { asyncGetProducts } from '../store/productList';
 
 export const HomePage = () => {
+    const dispatch = useDispatch();
     const { loading, error, products } = useSelector(
         (state: StoreRootState) => state.products
     );
+
+    useEffect(() => {
+        dispatch(asyncGetProducts());
+    }, [dispatch]);
 
     return (
         <>

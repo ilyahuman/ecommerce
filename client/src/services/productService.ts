@@ -3,8 +3,8 @@ import { axiosInstance } from './axiosInstance';
 import { Product } from '../types';
 
 interface ProductService {
-    getProducts(): AxiosPromise;
-    getProductById(id: string): AxiosPromise;
+    getProducts(): AxiosPromise<Product[]>;
+    getProductById(id: string): AxiosPromise<Product>;
 }
 
 export const ProductService: ProductService = {
@@ -13,11 +13,9 @@ export const ProductService: ProductService = {
 };
 
 function getProducts() {
-    return axiosInstance.get<Product[]>('http://localhost:5000/api/products');
+    return axiosInstance.get<Product[]>('/products');
 }
 
 function getProductById(id: string) {
-    return axiosInstance.get<Product>(
-        `http://localhost:5000/api/products/${id}`
-    );
+    return axiosInstance.get<Product>(`/products/${id}`);
 }

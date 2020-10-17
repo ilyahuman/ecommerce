@@ -32,6 +32,11 @@ export const OrderSuccess = () => {
                     Thank you {currentUser.name} for your purchase! Order ID#{' '}
                     {lastOrder.id}
                 </ListGroup.Item>
+                <ListGroup.Item>
+                    <Link to={`${AppRoutes.ORDER_DETAILS}/${lastOrder.id}`}>
+                        Go to Order Details Page{' '}
+                    </Link>
+                </ListGroup.Item>
             </ListGroup>
         </>
     );

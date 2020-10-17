@@ -20,7 +20,7 @@ import { useSummary } from '../hooks/useSummary';
 
 import { StoreRootState } from '../store';
 import { asyncOrderCreate } from '../store/order';
-import { asyncClearCart } from '../store/cart';
+import { asyncCartReset } from '../store/cart';
 import { useCheckout } from '../hooks/useCheckout';
 
 export const PlaceOrderPage = () => {
@@ -42,8 +42,8 @@ export const PlaceOrderPage = () => {
 
     useEffect(() => {
         if (lastOrder && lastOrder.isPlaced) {
-            dispatch(asyncClearCart());
-            history.push('/order_success');
+            dispatch(asyncCartReset());
+            history.push(AppRoutes.ORDER_SUCCESS);
         }
     }, [lastOrder]);
 

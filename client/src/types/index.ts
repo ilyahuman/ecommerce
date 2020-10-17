@@ -54,14 +54,43 @@ export interface User {
     password?: string;
 }
 
-export interface Order {
-    id?: string;
-    user?: string;
+export interface OrderCreate {
     orderItems: CartProduct[];
     shippingAddress: ShippingAddress;
+    paymentMethod: string;
     itemsPrice: number;
     shippingPrice: number;
     taxPrice: number;
     totalPrice: number;
-    isPlaced?: boolean;
+}
+
+export interface Order {
+    id: string;
+    user: {
+        _id: string;
+        name: string;
+        email: string;
+    };
+    orderItems: CartProduct[];
+    shippingAddress: ShippingAddress;
+    paymentMethod: string;
+    itemsPrice: number;
+    shippingPrice: number;
+    taxPrice: number;
+    totalPrice: number;
+    isPlaced: boolean;
+    isPaid: boolean;
+    isDelivered: boolean;
+    paidAt: string;
+    deliveredAt: string;
+}
+
+export interface OrderListItem {
+    _id: string;
+    createdAt: string;
+    totalPrice: number;
+    isPaid: boolean;
+    paidAt: string;
+    deliveredAt: string;
+    isDelivered: boolean;
 }

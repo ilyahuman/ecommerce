@@ -23,22 +23,19 @@ export const AuthService: AuthService = {
 };
 
 function signIn(user: UserSignInRequest) {
-    return axiosInstance.post<User>(
-        `http://localhost:5000/api/users/signin`,
-        user
-    );
+    return axiosInstance.post<User>(`/users/signin`, user);
 }
 
 function signUp(user: UserSignUpRequest) {
-    return axiosInstance.post<User>(`http://localhost:5000/api/users`, user);
+    return axiosInstance.post<User>(`/users`, user);
 }
 
 function getUser() {
-    return axiosInstance.get<User>(`http://localhost:5000/api/users/user`);
+    return axiosInstance.get<User>(`/users/user`);
 }
 
 function updateUser(user: User) {
-    return axiosInstance.put<User>(`http://localhost:5000/api/users/user`, {
+    return axiosInstance.put<User>(`/users/user`, {
         updateUser: user,
     });
 }

@@ -111,7 +111,7 @@ export const productListReducer = (
             return {
                 ...state,
                 loading: false,
-                products: [...state.products].concat(action.payload),
+                products: action.payload,
             };
         case ProductActionTypes.PRODUCT_LIST_FAILED:
             return {

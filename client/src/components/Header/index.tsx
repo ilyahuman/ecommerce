@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -16,6 +16,9 @@ export const Header = (): JSX.Element => {
     const { isSignedIn, currentUser } = useSelector(
         (state: StoreRootState) => state.user
     );
+
+    // Todo
+    const [state, setstate] = useState<string | null>(null);
 
     const onSignOut = (event: React.MouseEvent) => {
         event.preventDefault();
