@@ -1,11 +1,22 @@
 import express from 'express';
 import {
     getProducts,
-    getProductsById,
+    getProductById,
+    deleteProductById,
+    createProduct,
+    updateProductById,
 } from '../controllers/productController.js';
+import { authenticateToken } from '../middleware/authenticateToken.js';
+import { isAdmin } from '../middleware/isAdmin.js';
 
 export const router = express.Router();
 
-router.get('/', getProducts);
+router
+    .route('/:id')
+    .get(getProductById)
+    .delete(authenticateToken, isAdmin, deleteProductById)
+    .put(authenticateToken, isAdmin, updateProductById);
 
-router.get('/:id', getProductsById);
+router.route('/').post(authenticateToken, isAdmin, createProduct);
+
+router.get('/', getProducts);

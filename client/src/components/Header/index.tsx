@@ -7,15 +7,17 @@ import { AppRoutes } from '../../config';
 
 import { StoreRootState } from '../../store';
 import { asyncSignOut } from '../../store/user';
-
+import { useAuth } from '../../hooks/useAuth';
 import { isObjectEmpty } from '../../utils/isObjectEmpty';
 
 export const Header = (): JSX.Element => {
+    const { isSignedIn, user } = useAuth();
     const dispatch = useDispatch();
     const history = useHistory();
-    const { isSignedIn, currentUser } = useSelector(
-        (state: StoreRootState) => state.user
-    );
+    // const { isSignedIn, currentUser } = useSelector(
+    //     (state: StoreRootState) => state.user
+    // );
+    const { isAdmin } = user;
 
     // Todo
     const [state, setstate] = useState<string | null>(null);
@@ -43,7 +45,13 @@ export const Header = (): JSX.Element => {
                                 </Nav.Link>
                             </LinkContainer>
 
-                            {isSignedIn && !isObjectEmpty(currentUser) ? (
+                            {isAdmin ? (
+                                <LinkContainer to={AppRoutes.ADMIN}>
+                                    <Nav.Link>Admin</Nav.Link>
+                                </LinkContainer>
+                            ) : null}
+
+                            {isSignedIn && !isObjectEmpty(user) ? (
                                 <NavDropdown
                                     title="Dropdown"
                                     id="basic-nav-dropdown"
@@ -51,7 +59,7 @@ export const Header = (): JSX.Element => {
                                     <LinkContainer to={AppRoutes.PROFILE}>
                                         <NavDropdown.Item>
                                             <i className="fas fa-user"></i>{' '}
-                                            {currentUser.name}
+                                            {user.name}
                                         </NavDropdown.Item>
                                     </LinkContainer>
                                     <NavDropdown.Item onClick={onSignOut}>

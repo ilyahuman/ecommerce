@@ -69,7 +69,7 @@ export const CartPage = () => {
                         <ListGroup variant="flush">
                             {cartItems.map((product: CartProduct) => {
                                 return (
-                                    <ListGroup.Item key={product.id}>
+                                    <ListGroup.Item key={product._id}>
                                         <Row>
                                             <Col sm={3}>
                                                 <Image
@@ -80,7 +80,7 @@ export const CartPage = () => {
                                             </Col>
                                             <Col sm={3}>
                                                 <Link
-                                                    to={`${AppRoutes.PRODUCT}/${product.id}`}
+                                                    to={`${AppRoutes.PRODUCT}/${product._id}`}
                                                 >
                                                     {product.name}
                                                 </Link>
@@ -93,7 +93,7 @@ export const CartPage = () => {
                                                     onChange={(event) =>
                                                         dispatch(
                                                             asyncAddCartProduct(
-                                                                product.id,
+                                                                product._id,
                                                                 parseInt(
                                                                     event.target
                                                                         .value
@@ -127,7 +127,7 @@ export const CartPage = () => {
                                                     onClick={() =>
                                                         dispatch(
                                                             asyncRemoveCartProduct(
-                                                                product.id
+                                                                product._id
                                                             )
                                                         )
                                                     }

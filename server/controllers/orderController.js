@@ -35,7 +35,7 @@ export const addOrderItems = asyncHandler(async (req, res) => {
     });
 
     res.status(201).json({
-        id: createdOrder._id,
+        _id: createdOrder._id,
         orderItems: createdOrder.orderItems,
         shippingAddress: createdOrder.shippingAddress,
         paymentMethod: createdOrder.paymentMethod,
@@ -71,7 +71,7 @@ export const getOrderById = asyncHandler(async (req, res) => {
 
     if (order) {
         res.status(200).send({
-            id: order._id,
+            _id: order._id,
             orderItems: order.orderItems,
             shippingAddress: order.shippingAddress,
             paymentMethod: order.paymentMethod,
@@ -107,7 +107,7 @@ export const updateOrderToPaid = asyncHandler(async (req, res) => {
         const updatedOrder = await order.save();
 
         res.json({
-            id: updatedOrder._id,
+            _id: updatedOrder._id,
             orderItems: updatedOrder.orderItems,
             shippingAddress: updatedOrder.shippingAddress,
             paymentMethod: updatedOrder.paymentMethod,

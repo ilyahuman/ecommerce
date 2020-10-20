@@ -99,7 +99,7 @@ export const PlaceOrderPage = () => {
                             {cartItems.map(
                                 (product: CartProduct, index: number) => {
                                     return (
-                                        <tr key={product.id}>
+                                        <tr key={product._id}>
                                             <td>{index}</td>
                                             <td>
                                                 <Image
@@ -111,7 +111,7 @@ export const PlaceOrderPage = () => {
                                             </td>
                                             <td>
                                                 <Link
-                                                    to={`${AppRoutes.PRODUCT}/${product.id}`}
+                                                    to={`${AppRoutes.PRODUCT}/${product._id}`}
                                                 >
                                                     {product.name}
                                                 </Link>

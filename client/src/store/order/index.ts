@@ -356,7 +356,6 @@ export const orderReducer = (
     state: OrderState = orderState,
     action: OrderActions
 ): OrderState => {
-    debugger;
     switch (action.type) {
         case OrderActionTypes.ORDER_CREATE_REQUEST:
         case OrderActionTypes.ORDER_DETAILS_REQUEST:

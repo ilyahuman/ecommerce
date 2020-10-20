@@ -1,3 +1,7 @@
+export interface AuthToken {
+    accessToken: string;
+}
+
 export interface Product {
     _id: string;
     name: string;
@@ -12,7 +16,7 @@ export interface Product {
 }
 
 export interface CartProduct {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     price: number;
@@ -45,13 +49,18 @@ export interface ShippingAddress {
 }
 
 export interface User {
-    id: string;
+    _id: string;
     email: string;
     name: string;
     isAdmin: boolean;
-    token: string;
     shippingAddress: ShippingAddress;
-    password?: string;
+}
+
+export interface UserListItem {
+    _id: string;
+    email: string;
+    name: string;
+    isAdmin: boolean;
 }
 
 export interface OrderCreate {
@@ -65,7 +74,7 @@ export interface OrderCreate {
 }
 
 export interface Order {
-    id: string;
+    _id: string;
     user: {
         _id: string;
         name: string;

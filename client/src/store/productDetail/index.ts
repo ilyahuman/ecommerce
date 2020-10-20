@@ -97,7 +97,7 @@ export interface ProductDetailState {
 const productState: ProductDetailState = {
     product: {} as Product,
     loading: false,
-    error: '',
+    error: null,
 };
 
 export const productDetailReducer = (

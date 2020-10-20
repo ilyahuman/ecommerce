@@ -11,4 +11,10 @@ export enum AppRoutes {
     PLACE_ORDER = '/place_order',
     ORDER_SUCCESS = '/order_success',
     ORDER_DETAILS = '/order_details',
+
+    ADMIN = '/admin',
+    ADMIN_DASHBOARD = '/dashboard',
+    ADMIN_USER_LIST = '/users',
+    ADMIN_ORDER_LIST = '/orders',
+    ADMIN_PRODUCT_LIST = '/products',
 }

@@ -7,15 +7,14 @@ import { Message } from '../components/Message';
 import { Loader } from '../components/Loader';
 import { FormContainer } from '../components/FormContainer';
 
-import { asyncSignIn } from '../store/user';
 import { StoreRootState } from '../store';
 
-import { isObjectEmpty } from '../utils/isObjectEmpty';
+import { useAuth } from '../hooks/useAuth';
 
 export const SignInPage = () => {
-    const dispatch = useDispatch();
+    const { isSignedIn, signIn } = useAuth();
     const history = useHistory();
-    const { currentUser, isSignedIn, loading, error } = useSelector(
+    const { loading, error } = useSelector(
         (state: StoreRootState) => state.user
     );
     const [email, setEmail] = useState('');
@@ -26,7 +25,7 @@ export const SignInPage = () => {
 
     const onSubmitForm = (event: React.FormEvent<HTMLFontElement>) => {
         event.preventDefault();
-        dispatch(asyncSignIn({ email, password }));
+        signIn(email, password);
     };
 
     const redirectPageAfterSignIn = () => {

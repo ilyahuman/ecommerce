@@ -18,11 +18,6 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
     step2 = false,
     step3 = false,
 }: CheckoutStepsProps): JSX.Element => {
-    const dispatch = useDispatch();
-    const { isSignedIn, currentUser } = useSelector(
-        (state: StoreRootState) => state.user
-    );
-
     return (
         <Nav>
             <Nav.Item>

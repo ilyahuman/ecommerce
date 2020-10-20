@@ -1,16 +1,17 @@
-import axios, { AxiosPromise } from 'axios';
-import { User } from '../types';
+import axios from 'axios';
+import { AuthToken } from '../types';
 
 export function getAuthToken() {
-    const storedUser = localStorage.getItem('user');
-    let user: User = {} as User;
-    if (storedUser) {
-        user = JSON.parse(storedUser);
+    const storedToken = localStorage.getItem('token');
+    let token: AuthToken | null = null;
+    debugger;
+    if (storedToken) {
+        token = JSON.parse(storedToken);
     }
 
-    if (user && user.token) {
+    if (token) {
         // for Express back-end
-        return { authorization: `Bearer ${user.token}` };
+        return { authorization: `Bearer ${token.accessToken}` };
     } else {
         return {};
     }

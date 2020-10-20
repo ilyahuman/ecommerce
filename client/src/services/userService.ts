@@ -1,41 +1,37 @@
-import axios, { AxiosPromise } from 'axios';
+import { AxiosPromise } from 'axios';
 import { axiosInstance } from './axiosInstance';
 
-import {
-    User,
-    UserSignInRequest,
-    UserSignUpRequest,
-    UserPersonalUpdateRequest,
-} from '../types';
+import { User, UserPersonalUpdateRequest, UserListItem } from '../types';
 
-interface AuthService {
-    signIn(user: UserSignInRequest): AxiosPromise<User>;
-    signUp(user: UserSignUpRequest): AxiosPromise<User>;
+interface UserService {
     updateUser(user: UserPersonalUpdateRequest): AxiosPromise<User>;
-    getUser(): AxiosPromise<User>;
+    getUserDetails(): AxiosPromise<User>;
+    getUserList(): AxiosPromise<UserListItem[]>;
+    deleteUser(id: string): AxiosPromise;
 }
 
-export const AuthService: AuthService = {
-    signIn,
-    signUp,
-    getUser,
+export const UserService: UserService = {
+    getUserDetails,
     updateUser,
+    getUserList,
+    deleteUser,
 };
 
-function signIn(user: UserSignInRequest) {
-    return axiosInstance.post<User>(`/users/signin`, user);
-}
-
-function signUp(user: UserSignUpRequest) {
-    return axiosInstance.post<User>(`/users`, user);
-}
-
-function getUser() {
-    return axiosInstance.get<User>(`/users/user`);
+function getUserDetails() {
+    return axiosInstance.get<User>('/users/user');
 }
 
 function updateUser(user: User) {
-    return axiosInstance.put<User>(`/users/user`, {
+    return axiosInstance.put<User>('/users/user', {
         updateUser: user,
     });
+}
+
+function getUserList() {
+    return axiosInstance.get<UserListItem[]>('/users');
+}
+
+function deleteUser(id: string) {
+    debugger;
+    return axiosInstance.delete<string>(`/users/${id}`);
 }

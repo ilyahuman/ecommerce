@@ -85,7 +85,7 @@ export const asyncAddCartProduct = (id: string, qty: number) => async (
         if (data) {
             dispatch(
                 cartAddProduct({
-                    id: data._id,
+                    _id: data._id,
                     name: data.name,
                     image: data.image,
                     price: data.price,
@@ -172,14 +172,14 @@ export const cartReducer = (
         case CartActionTypes.CART_ADD_PRODUCT:
             const item = action.payload;
             const isExist = state.cartItems.find((product: CartProduct) => {
-                return product.id === item.id;
+                return product._id === item._id;
             });
 
             if (isExist) {
                 return {
                     ...state,
                     cartItems: state.cartItems.map((product: CartProduct) => {
-                        return product.id === isExist.id ? item : product;
+                        return product._id === isExist._id ? item : product;
                     }),
                 };
             } else {
@@ -192,7 +192,7 @@ export const cartReducer = (
             return {
                 ...state,
                 cartItems: state.cartItems.filter(
-                    (product: CartProduct) => action.payload !== product.id
+                    (product: CartProduct) => action.payload !== product._id
                 ),
             };
         case CartActionTypes.CART_ADD_PAYMENT_METHOD:

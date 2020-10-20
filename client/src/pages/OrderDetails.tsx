@@ -65,7 +65,7 @@ export const OrderDetails = () => {
     }, [lastOrder, successPay]);
 
     const onSuccessHandler = (paymentResult: any) => {
-        dispatch(asyncOrderPay(lastOrder?.id as string, paymentResult));
+        dispatch(asyncOrderPay(lastOrder?._id as string, paymentResult));
     };
 
     if (lastOrder === null) {
@@ -76,7 +76,7 @@ export const OrderDetails = () => {
 
     return (
         <>
-            <h1>Order {lastOrder.id}</h1>
+            <h1>Order {lastOrder._id}</h1>
             {loading ? (
                 <Loader />
             ) : error ? (
@@ -142,7 +142,7 @@ export const OrderDetails = () => {
                                 {lastOrder.orderItems.map(
                                     (product: CartProduct, index: number) => {
                                         return (
-                                            <tr key={product.id}>
+                                            <tr key={product._id}>
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <Image
@@ -154,7 +154,7 @@ export const OrderDetails = () => {
                                                 </td>
                                                 <td>
                                                     <Link
-                                                        to={`${AppRoutes.PRODUCT}/${product.id}`}
+                                                        to={`${AppRoutes.PRODUCT}/${product._id}`}
                                                     >
                                                         {product.name}
                                                     </Link>

@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StoreRootState } from '../store';
 import { asyncUpdateUser } from '../store/user';
 import { Message } from '../components/Message';
-import { OrderListItem, User } from '../types';
+import { OrderListItem } from '../types';
+import { asyncGetUser } from '../store/user/actions';
 import { asyncGetOrders } from '../store/order';
 import { Loader } from '../components/Loader';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -25,6 +26,7 @@ export const UserPage = () => {
     const [password, setPassword] = useState('');
 
     useEffect(() => {
+        dispatch(asyncGetUser());
         dispatch(asyncGetOrders());
     }, []);
 
@@ -36,7 +38,7 @@ export const UserPage = () => {
                 email,
                 name,
                 password,
-            } as User)
+            })
         );
 
         setPassword('');

@@ -23,7 +23,9 @@ import { PlaceOrderPage } from '../pages/PlaceOrderPage';
 import { OrderSuccess } from '../pages/OrderSuccess';
 import { OrderDetails } from '../pages/OrderDetails';
 
-import { asyncGetProducts } from '../store/productList';
+// Admin pages
+import { Admin } from '../pages/admin/Admin';
+
 import { StoreRootState } from '../store';
 
 // TODO Component Type
@@ -32,6 +34,31 @@ interface PrivateRouteProps {
     component: any;
     path: string;
 }
+
+const PrivateAdminRoute: React.FC<PrivateRouteProps> = ({
+    component: Component,
+    ...rest
+}: PrivateRouteProps) => {
+    const {
+        isSignedIn,
+        currentUser: { isAdmin },
+    } = useSelector((state: StoreRootState) => state.user);
+
+    return (
+        // Show the component only when the user is logged in and is admin
+        // Otherwise, redirect the user to /signin page
+        <Route
+            {...rest}
+            render={(props) =>
+                isSignedIn && isAdmin ? (
+                    <Component {...props} />
+                ) : (
+                    <Redirect to={`${AppRoutes.HOME}`} />
+                )
+            }
+        />
+    );
+};
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({
     component: Component,
@@ -113,6 +140,10 @@ export const App: React.FC = (): JSX.Element => {
                             <PrivateRoute
                                 path={`${AppRoutes.PROFILE}`}
                                 component={UserPage}
+                            />
+                            <PrivateAdminRoute
+                                path={`${AppRoutes.ADMIN}`}
+                                component={Admin}
                             />
                         </Switch>
                     </Container>
