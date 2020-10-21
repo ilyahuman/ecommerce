@@ -1,47 +1,32 @@
-import { useCallback, useEffect, useState } from 'react';
-import axios, { Method } from 'axios';
-import { AuthToken } from '../types';
+import { AxiosResponse } from 'axios';
+import { useCallback, useState } from 'react';
 
-export function getAuthToken() {
-    const storedToken = localStorage.getItem('token');
-    let token: AuthToken | null = null;
-    debugger;
-    if (storedToken) {
-        token = JSON.parse(storedToken);
-    }
-
-    if (token) {
-        // for Express back-end
-        return { authorization: `Bearer ${token.accessToken}` };
-    } else {
-        return {};
-    }
-}
-
-export const useFetch = <Req = any, Res = any>() => {
+export const useFetch = <Res = any>() => {
     const [response, setResponse] = useState<Res | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    let isMounted = true;
+
+    const setIsMounted = () => (isMounted = !isMounted);
 
     const request = useCallback(
-        async (url: string, method?: Method, request?: Req) => {
+        async (
+            apiServiceCall: () => Promise<AxiosResponse<Res>>,
+            callback?: () => void
+        ) => {
             try {
                 setLoading(true);
 
-                const { data } = await axios.request<Res>({
-                    url: url,
-                    method: method,
-                    data: request,
-                    headers: getAuthToken(),
-                });
-
-                if (data) {
+                const { data } = await apiServiceCall();
+                debugger;
+                if (data && isMounted) {
                     setResponse(data);
                     setLoading(false);
+                    if (callback) callback();
                 }
             } catch (error) {
                 setLoading(false);
-                setError(error.message);
+                setError(`${error.response.data.message}\n${error.message}`);
             }
         },
         []
@@ -52,5 +37,6 @@ export const useFetch = <Req = any, Res = any>() => {
         response,
         loading,
         error,
+        setIsMounted,
     };
 };

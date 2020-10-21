@@ -124,3 +124,40 @@ export const updateOrderToPaid = asyncHandler(async (req, res) => {
         });
     }
 });
+
+export const getOrderList = asyncHandler(async (req, res) => {
+    const orders = await Order.find({}).populate('user', ['name', 'email']);
+    console.log(orders);
+    if (orders) {
+        res.status(200).send(orders);
+    }
+});
+
+export const updateOrderToDeliver = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+
+    if (order) {
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+
+        const updatedOrder = await order.save();
+
+        res.json({
+            _id: updatedOrder._id,
+            orderItems: updatedOrder.orderItems,
+            shippingAddress: updatedOrder.shippingAddress,
+            paymentMethod: updatedOrder.paymentMethod,
+            itemsPrice: updatedOrder.itemsPrice,
+            taxPrice: updatedOrder.taxPrice,
+            shippingPrice: updatedOrder.shippingPrice,
+            totalPrice: updatedOrder.totalPrice,
+            user: updatedOrder.user,
+            isPlaced: updatedOrder.isPlaced,
+            isPaid: updatedOrder.isPaid,
+            isDelivered: updatedOrder.isDelivered,
+            paidAt: updatedOrder.paidAt,
+            deliveredAt: updatedOrder.deliveredAt,
+        });
+    }
+});

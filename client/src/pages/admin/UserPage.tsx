@@ -16,14 +16,21 @@ import { GoBack } from '../../components/GoBack';
 import { useFetch } from '../../hooks/useFetch';
 import { useParams } from 'react-router-dom';
 
+// Services
+import { UserService } from '../../services/userService';
+import { UserList } from './UserList';
+
 export const UserPage = (props: any) => {
-    console.log(props);
+    const dispatch = useDispatch();
     const { id } = useParams<{ id: string }>();
     const [user, setUser] = useState<User>({} as User);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const userFetch = useFetch<any, User>();
-    const updateFetch = useFetch<UserPersonalUpdateRequest, User>();
+    const userFetch = useFetch<User>();
+    const updateFetch = useFetch<User>();
+    const { _id: currentUserId } = useSelector(
+        (state: StoreRootState) => state.user.currentUser
+    );
 
     useEffect(() => {
         if (userFetch.response) {
@@ -34,20 +41,21 @@ export const UserPage = (props: any) => {
     }, [userFetch.response]);
 
     useEffect(() => {
-        debugger;
-        userFetch.request(`http://localhost:5000/api/users/${id}`);
+        userFetch.request(() => UserService.getUserById(id));
+        if (id === currentUserId) {
+            console.log('same');
+        }
+
+        return () => {
+            debugger;
+            updateFetch.setIsMounted();
+        };
     }, [updateFetch.response]);
 
     const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        updateFetch.request(
-            `http://localhost:5000/api/users/${user._id}`,
-            'PUT',
-            {
-                email,
-                name,
-            }
+        updateFetch.request(() =>
+            UserService.updateUserById(user._id, { email, name })
         );
     };
 

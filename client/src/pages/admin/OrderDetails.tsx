@@ -3,77 +3,55 @@ import { PayPalButton } from 'react-paypal-button-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 
-import { CartProduct, Order } from '../types';
+import { asyncGetOrder } from '../../store/order';
+import { CartProduct, Order } from '../../types';
+import { StoreRootState } from '../../store';
 
-import { Row, Col, ListGroup, Image, Card, Table } from 'react-bootstrap';
+import {
+    Row,
+    Col,
+    ListGroup,
+    Image,
+    Card,
+    Table,
+    Button,
+} from 'react-bootstrap';
 
-import { Message } from '../components/Message';
-import { Loader } from '../components/Loader';
-import { AppRoutes } from '../config';
-import { axiosInstance } from '../services/axiosInstance';
-import { AppService } from '../services/appService';
-import { OrderService } from '../services/orderService';
-import { useFetch } from '../hooks/useFetch';
+import { Message } from '../../components/Message';
+import { Loader } from '../../components/Loader';
+import { AppRoutes } from '../../config';
+import { GoBack } from '../../components/GoBack';
+import { useFetch } from '../../hooks/useFetch';
+import { OrderService } from '../../services/orderService';
 
 // ! FIX currentOrder can be NULL
 export const OrderDetails = () => {
-    const { id: orderId } = useParams<{ id: string }>();
-    const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
-    const [sdkReady, setSdkReady] = useState(false);
-    const { request, response, loading, error } = useFetch<Order>();
+    const dispatch = useDispatch();
+    const { request, response, loading, error } = useFetch();
     const {
-        request: requestPay,
-        response: responsePay,
-        loading: loadingPay,
-        error: errorPay,
-        setIsMounted,
-    } = useFetch<any>();
+        request: requestDelivery,
+        response: responseDelivery,
+        loading: loadingDelivery,
+        error: errorDelivery,
+    } = useFetch();
+    const { id: orderId } = useParams<{ id: string }>();
+    const [currentOrder, setOrder] = useState<Order | null>(null);
 
     useEffect(() => {
         request(() => OrderService.getOrderDetails(orderId));
     }, []);
 
     useEffect(() => {
-        if (response) {
-            setCurrentOrder(response);
-        }
+        setOrder(response);
     }, [response]);
 
     useEffect(() => {
-        if (responsePay) {
-            setCurrentOrder(responsePay);
-        }
-    }, [responsePay]);
+        setOrder(responseDelivery);
+    }, [responseDelivery]);
 
-    const onSuccessHandler = (paymentResult: any) => {
-        requestPay(() =>
-            OrderService.orderPay(currentOrder?._id as string, paymentResult)
-        );
+    const onDeliveryHandler = () => {
+        requestDelivery(() => OrderService.orderDeliver(orderId));
     };
-
-    // ! Need to think about this logic ( Now we have order and orderPay to implement this )
-    useEffect(() => {
-        const addPaypalScript = async () => {
-            const { data: clientId } = await AppService.getPayPalId();
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
-            script.async = true;
-            script.onload = () => {
-                setSdkReady(true);
-            };
-            document.body.appendChild(script);
-        };
-
-        if (currentOrder && !responsePay) {
-            // @ts-ignore
-            if (!window.paypal) {
-                addPaypalScript();
-            } else {
-                setSdkReady(true);
-            }
-        }
-    }, [currentOrder]);
 
     if (!currentOrder) {
         return null;
@@ -87,6 +65,7 @@ export const OrderDetails = () => {
 
     return (
         <>
+            <GoBack />
             <h1>Order {currentOrder._id}</h1>
             {loading ? (
                 <Loader />
@@ -100,11 +79,11 @@ export const OrderDetails = () => {
                                 <h4>Shipping</h4>
                                 <p>
                                     <strong>Name:</strong>{' '}
-                                    {currentOrder.user?.name}
+                                    {currentOrder.user.name}
                                 </p>
                                 <p>
                                     <strong>Email:</strong>{' '}
-                                    {currentOrder.user?.email}
+                                    {currentOrder.user.email}
                                 </p>
                                 <p>
                                     <strong>Address: </strong>
@@ -219,18 +198,18 @@ export const OrderDetails = () => {
                                         <Col>${currentOrder.totalPrice}</Col>
                                     </Row>
                                 </ListGroup.Item>
+                                {currentOrder.isPaid &&
+                                    !currentOrder.isDelivered && (
+                                        <ListGroup.Item>
+                                            <Button onClick={onDeliveryHandler}>
+                                                Deliver
+                                            </Button>
+                                        </ListGroup.Item>
+                                    )}
                                 {!currentOrder.isPaid && (
-                                    <ListGroup.Item>
-                                        {loadingPay && <Loader />}
-                                        {!sdkReady ? (
-                                            <Loader />
-                                        ) : (
-                                            <PayPalButton
-                                                amount={currentOrder.itemsPrice}
-                                                onSuccess={onSuccessHandler}
-                                            />
-                                        )}
-                                    </ListGroup.Item>
+                                    <Message variant="danger">
+                                        Not paid yet
+                                    </Message>
                                 )}
                             </ListGroup>
                         </Card>

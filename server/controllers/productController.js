@@ -21,17 +21,27 @@ export const getProductById = asyncHandler(async (req, res) => {
 
 export const createProduct = asyncHandler(async (req, res) => {
     const { id } = req.user;
+    const {
+        name,
+        price,
+        image,
+        brand,
+        category,
+        description,
+        countInStock,
+    } = req.body;
+
     let product = new Product({
-        name: 'simple name',
-        price: 0,
+        name,
+        price,
         user: id,
-        image: '/images/camera.jpg',
-        brand: 'simple brabd',
-        category: 'simple category',
-        description: 'simple description',
+        image,
+        brand,
+        category,
+        description,
         rating: 0,
         numReviews: 0,
-        countInStock: 0,
+        countInStock,
     });
 
     if (product) {
@@ -55,7 +65,6 @@ export const updateProductById = asyncHandler(async (req, res) => {
     //     numReviews,
     //     countInStock,
     // } = req.body;
-    console.log(req.body);
     let product = await Product.findByIdAndUpdate(id, req.body, { new: true });
 
     if (product) {

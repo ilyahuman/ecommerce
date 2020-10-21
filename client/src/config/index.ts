@@ -17,4 +17,6 @@ export enum AppRoutes {
     ADMIN_USER_LIST = '/users',
     ADMIN_ORDER_LIST = '/orders',
     ADMIN_PRODUCT_LIST = '/products',
+    ADMIN_PRODUCT_EDIT = '/admin/products/edit',
+    ADMIN_ORDER_EDIT = '/admin/orders/edit',
 }

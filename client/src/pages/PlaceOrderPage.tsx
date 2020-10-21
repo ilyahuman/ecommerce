@@ -34,18 +34,20 @@ export const PlaceOrderPage = () => {
     const { cartItems, paymentMethod } = useSelector(
         (state: StoreRootState) => state.cart
     );
-    const { lastOrder } = useSelector((state: StoreRootState) => state.order);
+    const { currentOrder } = useSelector(
+        (state: StoreRootState) => state.order
+    );
 
     const [itemsPrice, shippingPrice, taxPrice, totalPrice] = useSummary(
         cartItems
     );
 
     useEffect(() => {
-        if (lastOrder && lastOrder.isPlaced) {
+        if (currentOrder && currentOrder.isPlaced) {
             dispatch(asyncCartReset());
             history.push(AppRoutes.ORDER_SUCCESS);
         }
-    }, [lastOrder]);
+    }, [currentOrder]);
 
     // TODO types casting
     const onPlaceOrderHandler = () => {

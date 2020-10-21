@@ -8,6 +8,11 @@ interface UserService {
     getUserDetails(): AxiosPromise<User>;
     getUserList(): AxiosPromise<UserListItem[]>;
     deleteUser(id: string): AxiosPromise;
+    getUserById(id: string): AxiosPromise<User>;
+    updateUserById(
+        id: string,
+        data: UserPersonalUpdateRequest
+    ): AxiosPromise<User>;
 }
 
 export const UserService: UserService = {
@@ -15,6 +20,8 @@ export const UserService: UserService = {
     updateUser,
     getUserList,
     deleteUser,
+    getUserById,
+    updateUserById,
 };
 
 function getUserDetails() {
@@ -27,11 +34,19 @@ function updateUser(user: User) {
     });
 }
 
+// !Admin
 function getUserList() {
     return axiosInstance.get<UserListItem[]>('/users');
 }
 
 function deleteUser(id: string) {
-    debugger;
     return axiosInstance.delete<string>(`/users/${id}`);
+}
+
+function getUserById(id: string) {
+    return axiosInstance.get<User>(`/users/${id}`);
+}
+
+function updateUserById(id: string, data: UserPersonalUpdateRequest) {
+    return axiosInstance.put<User>(`/users/${id}`, data);
 }

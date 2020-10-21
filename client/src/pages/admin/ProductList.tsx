@@ -12,7 +12,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { AppRoutes } from '../../config';
 import { asyncGetProducts } from '../../store/productList';
 
-export const ProductList = ({ match }: any) => {
+export const ProductList = (props: any) => {
     const dispatch = useDispatch();
     const { products, loading, error } = useSelector(
         (state: StoreRootState) => state.products
@@ -35,7 +35,9 @@ export const ProductList = ({ match }: any) => {
                     <h2>Product List</h2>
                 </Col>
                 <Col className="text-right" md={4}>
-                    <Button>Add Product</Button>
+                    <LinkContainer to={`${AppRoutes.ADMIN_PRODUCT_EDIT}`}>
+                        <Button>Add Product</Button>
+                    </LinkContainer>
                 </Col>
             </Row>
             {loading && <Loader />}
@@ -71,7 +73,7 @@ export const ProductList = ({ match }: any) => {
                                     <td>
                                         <div className="d-flex justify-content-around">
                                             <LinkContainer
-                                                to={`${match.path}/${product._id}`}
+                                                to={`${AppRoutes.ADMIN_PRODUCT_EDIT}/${product._id}`}
                                             >
                                                 <Button
                                                     size="sm"

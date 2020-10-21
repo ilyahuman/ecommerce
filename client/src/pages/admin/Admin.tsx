@@ -8,7 +8,11 @@ import { Dashboard } from './Dashboard';
 import { UserList } from './UserList';
 import { UserPage } from './UserPage';
 import { ProductList } from './ProductList';
-import { ProductPage } from './ProductPage';
+import { EditProduct } from './EditProduct';
+import { OrderList } from './OrderList';
+import { OrderDetails } from './OrderDetails';
+
+import { Provider } from 'react-redux';
 
 interface AdminLinkListItem {
     label: string;
@@ -76,8 +80,12 @@ export const Admin = () => {
                 <Col md={9}>
                     <Switch>
                         <Route
-                            path={`${match.path}${AppRoutes.ADMIN_PRODUCT_LIST}/:id`}
-                            component={ProductPage}
+                            path={`${AppRoutes.ADMIN_PRODUCT_EDIT}/:id`}
+                            component={EditProduct}
+                        />
+                        <Route
+                            path={`${AppRoutes.ADMIN_PRODUCT_EDIT}`}
+                            component={EditProduct}
                         />
                         <Route
                             exact
@@ -92,6 +100,15 @@ export const Admin = () => {
                             exact
                             path={`${match.path}${AppRoutes.ADMIN_USER_LIST}`}
                             component={UserList}
+                        />
+                        <Route
+                            path={`${AppRoutes.ADMIN_ORDER_EDIT}/:id`}
+                            component={OrderDetails}
+                        />
+                        <Route
+                            exact
+                            path={`${match.path}${AppRoutes.ADMIN_ORDER_LIST}`}
+                            component={OrderList}
                         />
                         <Route path={`${match.path}`} component={Dashboard} />
                     </Switch>

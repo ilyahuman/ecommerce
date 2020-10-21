@@ -4,7 +4,7 @@ import { AuthToken } from '../types';
 export function getAuthToken() {
     const storedToken = localStorage.getItem('token');
     let token: AuthToken | null = null;
-    debugger;
+
     if (storedToken) {
         token = JSON.parse(storedToken);
     }

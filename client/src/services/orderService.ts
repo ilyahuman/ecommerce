@@ -1,13 +1,20 @@
 import { AxiosPromise } from 'axios';
 import { axiosInstance } from './axiosInstance';
 
-import { Order, OrderCreate, OrderListItem } from '../types';
+import {
+    Order,
+    OrderCreate,
+    OrderUserListItem,
+    OrderAdminListItem,
+} from '../types';
 
 interface OrderService {
     createOrder(order: OrderCreate): AxiosPromise<Order>;
-    getOrders(): AxiosPromise<OrderListItem[]>;
+    getOrders(): AxiosPromise<OrderUserListItem[]>;
     getOrderDetails(id: string): AxiosPromise<Order>;
     orderPay(id: string, paymentResult: any): AxiosPromise<Order>;
+    orderDeliver(id: string): AxiosPromise<any>;
+    getOrderList(): AxiosPromise<OrderAdminListItem[]>;
 }
 
 export const OrderService: OrderService = {
@@ -15,6 +22,8 @@ export const OrderService: OrderService = {
     getOrders,
     getOrderDetails,
     orderPay,
+    orderDeliver,
+    getOrderList,
 };
 
 function createOrder(order: OrderCreate) {
@@ -26,9 +35,18 @@ function getOrderDetails(id: string) {
 }
 
 function getOrders() {
-    return axiosInstance.get<OrderListItem[]>(`/orders`);
+    return axiosInstance.get<OrderUserListItem[]>(`/orders`);
 }
 
 function orderPay(id: string, paymentResult: any) {
     return axiosInstance.put<Order>(`/orders/${id}/pay`, { paymentResult });
+}
+
+function getOrderList() {
+    return axiosInstance.get<OrderAdminListItem[]>(`/orders/list`);
+}
+
+// !Admin
+function orderDeliver(id: string) {
+    return axiosInstance.put<Order>(`/orders/${id}/deliver`);
 }

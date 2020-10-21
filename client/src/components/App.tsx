@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { AppRoutes } from '../config';
 
 import { Header } from './Header';
-import Footer from './Footer';
+import { Footer } from './Footer';
 import { HomePage } from '../pages/HomePage';
 import { ProductPage } from '../pages/ProductPage';
 import { CartPage } from '../pages/CartPage';

@@ -11,7 +11,9 @@ export const OrderSuccess = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const { currentUser } = useSelector((state: StoreRootState) => state.user);
-    const { lastOrder } = useSelector((state: StoreRootState) => state.order);
+    const { currentOrder } = useSelector(
+        (state: StoreRootState) => state.order
+    );
 
     useEffect(() => {
         return () => {
@@ -19,7 +21,7 @@ export const OrderSuccess = () => {
         };
     }, []);
 
-    if (!lastOrder) {
+    if (!currentOrder) {
         history.push(AppRoutes.HOME);
 
         return null;
@@ -30,10 +32,10 @@ export const OrderSuccess = () => {
             <ListGroup>
                 <ListGroup.Item variant="success">
                     Thank you {currentUser.name} for your purchase! Order ID#{' '}
-                    {lastOrder._id}
+                    {currentOrder._id}
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <Link to={`${AppRoutes.ORDER_DETAILS}/${lastOrder._id}`}>
+                    <Link to={`${AppRoutes.ORDER_DETAILS}/${currentOrder._id}`}>
                         Go to Order Details Page{' '}
                     </Link>
                 </ListGroup.Item>

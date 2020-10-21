@@ -1,3 +1,8 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import express from 'express';
+
 // Project vars
 import { App } from './app.js';
 import { config } from './config.js';
@@ -8,6 +13,7 @@ import { notFound, errorHandler } from './middleware/error.js';
 import { router as productRouter } from './routes/productRoutes.js';
 import { router as userRouter } from './routes/userRoutes.js';
 import { router as orderRouter } from './routes/orderRoutes.js';
+import { router as uploadRouter } from './routes/uploadRoutes.js';
 
 const app = new App().app;
 
@@ -19,6 +25,12 @@ const main = async () => {
     app.use('/api/users/', userRouter);
 
     app.use('/api/orders/', orderRouter);
+
+    app.use('/api/upload/', uploadRouter);
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
     app.get('/api/config/paypal', (req, res) => {
         res.send(process.env.PAYPAL_CLIENT_ID);

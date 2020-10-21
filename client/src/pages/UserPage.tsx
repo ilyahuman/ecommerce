@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StoreRootState } from '../store';
 import { asyncUpdateUser } from '../store/user';
 import { Message } from '../components/Message';
-import { OrderListItem } from '../types';
+import { OrderUserListItem } from '../types';
 import { asyncGetUser } from '../store/user/actions';
 import { asyncGetOrders } from '../store/order';
 import { Loader } from '../components/Loader';
@@ -110,42 +110,49 @@ export const UserPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.map((order: OrderListItem, index: number) => {
-                            return (
-                                <tr key={order._id}>
-                                    <td>{index + 1}</td>
-                                    <td>{order.createdAt.substring(0, 10)}</td>
-                                    <td>{order.totalPrice}</td>
-                                    <td>
-                                        {order.isPaid ? (
-                                            order.paidAt.substring(0, 10)
-                                        ) : (
-                                            <i
-                                                className="fas fa-times"
-                                                style={{ color: 'red' }}
-                                            ></i>
-                                        )}
-                                    </td>
-                                    <td>
-                                        {order.isDelivered ? (
-                                            order.deliveredAt.substring(0, 10)
-                                        ) : (
-                                            <i
-                                                className="fas fa-times"
-                                                style={{ color: 'red' }}
-                                            ></i>
-                                        )}
-                                    </td>
-                                    <td>
-                                        <LinkContainer
-                                            to={`${AppRoutes.ORDER_DETAILS}/${order._id}`}
-                                        >
-                                            <Button>Details</Button>
-                                        </LinkContainer>
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                        {orders.map(
+                            (order: OrderUserListItem, index: number) => {
+                                return (
+                                    <tr key={order._id}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            {order.createdAt.substring(0, 10)}
+                                        </td>
+                                        <td>{order.totalPrice}</td>
+                                        <td>
+                                            {order.isPaid ? (
+                                                order.paidAt.substring(0, 10)
+                                            ) : (
+                                                <i
+                                                    className="fas fa-times"
+                                                    style={{ color: 'red' }}
+                                                ></i>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {order.isDelivered ? (
+                                                order.deliveredAt.substring(
+                                                    0,
+                                                    10
+                                                )
+                                            ) : (
+                                                <i
+                                                    className="fas fa-times"
+                                                    style={{ color: 'red' }}
+                                                ></i>
+                                            )}
+                                        </td>
+                                        <td>
+                                            <LinkContainer
+                                                to={`${AppRoutes.ORDER_DETAILS}/${order._id}`}
+                                            >
+                                                <Button>Details</Button>
+                                            </LinkContainer>
+                                        </td>
+                                    </tr>
+                                );
+                            }
+                        )}
                     </tbody>
                 </Table>
             )}

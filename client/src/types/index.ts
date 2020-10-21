@@ -15,6 +15,16 @@ export interface Product {
     numReviews: number;
 }
 
+export interface ProductEdit {
+    name: string;
+    image: string;
+    description: string;
+    brand: string;
+    category: string;
+    price: number;
+    countInStock: number;
+}
+
 export interface CartProduct {
     _id: string;
     name: string;
@@ -94,7 +104,7 @@ export interface Order {
     deliveredAt: string;
 }
 
-export interface OrderListItem {
+export interface OrderUserListItem {
     _id: string;
     createdAt: string;
     totalPrice: number;
@@ -102,4 +112,19 @@ export interface OrderListItem {
     paidAt: string;
     deliveredAt: string;
     isDelivered: boolean;
+}
+
+export interface OrderAdminListItem {
+    _id: string;
+    createdAt: string;
+    totalPrice: number;
+    isPaid: boolean;
+    paidAt: string;
+    deliveredAt: string;
+    isDelivered: boolean;
+    user: {
+        _id: string;
+        name: string;
+        email: string;
+    };
 }

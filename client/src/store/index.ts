@@ -2,9 +2,9 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
-import { productListReducer, ProductsState } from './productList';
-import { productDetailReducer, ProductDetailState } from './productDetail';
-import { cartReducer, CartState } from './cart';
+import { productListReducer } from './productList';
+import { productDetailReducer } from './productDetail';
+import { cartReducer } from './cart';
 import {
     userReducer,
     UserState,
@@ -12,7 +12,7 @@ import {
     userListReducer,
     UserListState,
 } from './user';
-import { orderReducer, OrderState } from './order';
+import { orderReducer, orderListReducer } from './order';
 
 import { CartProduct, User, AuthToken } from '../types';
 
@@ -23,6 +23,7 @@ const reducers = combineReducers({
     user: userReducer,
     userList: userListReducer,
     order: orderReducer,
+    orderList: orderListReducer,
 });
 
 export type StoreRootState = ReturnType<typeof reducers>;

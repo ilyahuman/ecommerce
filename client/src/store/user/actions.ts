@@ -430,6 +430,8 @@ export const asyncUpdateUser = (userCreds: UserPersonalUpdateRequest) => async (
     }
 };
 
+// ! Admin actions
+
 export const asyncUserList = () => async (dispatch: Dispatch<UserActions>) => {
     try {
         dispatch(userListRequest());

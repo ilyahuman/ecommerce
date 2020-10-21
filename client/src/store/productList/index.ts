@@ -157,7 +157,7 @@ export const asyncDeleteProduct = (id: string) => async (
 export interface ProductsState {
     products: Product[];
     loading: boolean;
-    error?: string | null;
+    error: string | null;
 }
 
 const productState: ProductsState = {
@@ -172,6 +172,7 @@ export const productListReducer = (
 ): ProductsState => {
     switch (action.type) {
         case ProductActionTypes.PRODUCT_LIST_REQUEST:
+        case ProductActionTypes.PRODUCT_DELETE_REQUEST:
             return {
                 ...state,
                 loading: true,
@@ -183,6 +184,7 @@ export const productListReducer = (
                 products: action.payload,
             };
         case ProductActionTypes.PRODUCT_LIST_FAILED:
+        case ProductActionTypes.PRODUCT_DELETE_FAILED:
             return {
                 ...state,
                 loading: false,
