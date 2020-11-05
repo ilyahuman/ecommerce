@@ -13,7 +13,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 export const UserList = ({ match }: any) => {
     const dispatch = useDispatch();
     const { users, loading, error } = useSelector(
-        (state: StoreRootState) => state.userList
+        (state: StoreRootState) => state.admin.userList
     );
 
     const onDeleteHandler = (id: string) => {

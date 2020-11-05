@@ -40,7 +40,6 @@ export const EditProduct = () => {
 
     useEffect(() => {
         if (uploadResponse) {
-            debugger;
             setProduct({
                 ...product,
                 image: uploadResponse,

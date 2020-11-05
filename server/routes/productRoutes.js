@@ -5,6 +5,7 @@ import {
     deleteProductById,
     createProduct,
     updateProductById,
+    createProductReview,
 } from '../controllers/productController.js';
 import { authenticateToken } from '../middleware/authenticateToken.js';
 import { isAdmin } from '../middleware/isAdmin.js';
@@ -16,6 +17,8 @@ router
     .get(getProductById)
     .delete(authenticateToken, isAdmin, deleteProductById)
     .put(authenticateToken, isAdmin, updateProductById);
+
+router.route('/:id/reviews').post(authenticateToken, createProductReview);
 
 router.route('/').post(authenticateToken, isAdmin, createProduct);
 

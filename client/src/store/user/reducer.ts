@@ -1,6 +1,6 @@
 import { User, UserListItem, AuthToken } from '../../types';
 import { UserActions } from './actions';
-
+import { storage } from '../../utils/simplePersistence';
 import { UserActionTypes } from './consts';
 
 /**
@@ -18,7 +18,7 @@ export interface UserState {
     token: AuthToken;
 }
 
-export const isSignedIn = (): boolean => !!localStorage.getItem('user');
+export const isSignedIn = (): boolean => !!storage.getItem('user');
 
 const userState: UserState = {
     currentUser: {

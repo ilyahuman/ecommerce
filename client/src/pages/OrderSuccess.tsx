@@ -3,7 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { Button, ListGroup } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { orderClearLast } from '../store/order';
+import { orderActions } from '../store/order';
 import { StoreRootState } from '../store';
 import { AppRoutes } from '../config';
 
@@ -17,7 +17,7 @@ export const OrderSuccess = () => {
 
     useEffect(() => {
         return () => {
-            dispatch(orderClearLast());
+            dispatch(orderActions.orderClearLast());
         };
     }, []);
 

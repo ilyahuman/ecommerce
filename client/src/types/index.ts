@@ -13,6 +13,26 @@ export interface Product {
     countInStock: number;
     rating: number;
     numReviews: number;
+    reviews: ProductReview[];
+}
+
+export interface ProductCollection {
+    products: Product[];
+    pageNumber: number;
+    totalProducts: number;
+}
+
+export interface ProductReview {
+    _id: string;
+    name: string;
+    comment: string;
+    rating: number;
+    createdAt: string;
+}
+
+export interface ProductReviewRequest {
+    comment: string;
+    rating: number;
 }
 
 export interface ProductEdit {

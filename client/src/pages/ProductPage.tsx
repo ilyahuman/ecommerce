@@ -5,11 +5,12 @@ import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { Rating } from '../components/Rating';
 import { Loader } from '../components/Loader';
 import { Message } from '../components/Message';
+import { ProductReviews } from './ProductReviews';
 
-import { asyncGetProduct } from '../store/productDetail';
-import { StoreRootState } from '../store';
-
-import { makeQtySelect } from '../utils/makeQtySelect';
+import { useFetch } from '../hooks/useFetch';
+import { ProductService } from '../services/productService';
+import { makeArrayFromInt } from '../utils/makeArrayFromInt';
+import { Product, ProductReviewRequest } from '../types';
 
 interface ProductPageParams {
     id: string;
@@ -18,16 +19,61 @@ interface ProductPageParams {
 export const ProductPage = () => {
     const history = useHistory();
     const dispatch = useDispatch();
+    const { id } = useParams<ProductPageParams>();
+    const { request, response, loading, error } = useFetch<Product>();
+    const {
+        request: reviewRequest,
+        response: reviewResponse,
+        loading: reviewLoading,
+        error: reviewError,
+        setIsMounted,
+    } = useFetch<Product>();
     const [qtyArray, setQtyArray] = useState<number[]>([]);
     const [qty, setQty] = useState<number>(1);
-    const { id } = useParams<ProductPageParams>();
-    const { product, loading, error } = useSelector(
-        (state: StoreRootState) => state.productDetail
-    );
+    const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {
-        dispatch(asyncGetProduct(id));
-    }, [dispatch]);
+        request(() => ProductService.getProductById(id));
+    }, []);
+
+    useEffect(() => {
+        if (response) {
+            setProduct(response);
+        }
+    }, [response]);
+
+    useEffect(() => {
+        if (product?.countInStock) {
+            setQtyArray(makeArrayFromInt(countInStock));
+        }
+    }, [product]);
+
+    useEffect(() => {
+        if (reviewResponse) {
+            setProduct(reviewResponse);
+        }
+
+        return () => {
+            setIsMounted();
+        };
+    }, [reviewResponse]);
+
+    const addToCartHandler = (event: any) => {
+        event.preventDefault();
+        history.push(`/cart/${id}?qty=${qty}`);
+    };
+
+    const createReview = (review: ProductReviewRequest) => {
+        reviewRequest(() => ProductService.createProductReview(id, review));
+    };
+
+    if (!product) {
+        return null;
+    }
+
+    if (!product && loading) {
+        return <Loader />;
+    }
 
     const {
         price,
@@ -37,22 +83,8 @@ export const ProductPage = () => {
         description,
         image,
         countInStock,
-    } = product;
-
-    const addToCartHandler = (event: any) => {
-        event.preventDefault();
-        history.push(`/cart/${id}?qty=${qty}`);
-    };
-
-    useEffect(() => {
-        if (countInStock) {
-            setQtyArray(makeQtySelect(countInStock));
-        }
-    }, [countInStock]);
-
-    if (!product) {
-        return <Redirect to="/" />;
-    }
+        reviews,
+    } = product as Product;
 
     return (
         <>
@@ -112,13 +144,13 @@ export const ProductPage = () => {
                                                     }
                                                 )}
                                             </Form.Control>
-                                            <Button
-                                                variant="primary"
-                                                onClick={addToCartHandler}
-                                            >
-                                                Primary
-                                            </Button>{' '}
                                         </Form.Group>
+                                        <Button
+                                            variant="primary"
+                                            onClick={addToCartHandler}
+                                        >
+                                            Primary
+                                        </Button>{' '}
                                     </ListGroup.Item>
                                 ) : (
                                     <Message variant="danger">
@@ -126,6 +158,12 @@ export const ProductPage = () => {
                                     </Message>
                                 )}
                             </ListGroup>
+                        </Col>
+                        <Col>
+                            <ProductReviews
+                                reviews={reviews}
+                                createReview={createReview}
+                            />
                         </Col>
                     </>
                 )}

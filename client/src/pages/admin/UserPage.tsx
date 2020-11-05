@@ -47,7 +47,6 @@ export const UserPage = (props: any) => {
         }
 
         return () => {
-            debugger;
             updateFetch.setIsMounted();
         };
     }, [updateFetch.response]);

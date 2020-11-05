@@ -9,6 +9,7 @@ import { StoreRootState } from '../../store';
 import { asyncSignOut } from '../../store/user';
 import { useAuth } from '../../hooks/useAuth';
 import { isObjectEmpty } from '../../utils/isObjectEmpty';
+import { SearchBox } from '../SearchBox';
 
 export const Header = (): JSX.Element => {
     const { isSignedIn, user } = useAuth();
@@ -37,6 +38,8 @@ export const Header = (): JSX.Element => {
                     </LinkContainer>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
+                        <SearchBox />
+
                         <Nav className="ml-auto">
                             <LinkContainer to={AppRoutes.CART}>
                                 <Nav.Link>

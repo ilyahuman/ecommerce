@@ -1,13 +1,25 @@
 import { AxiosPromise } from 'axios';
 import { axiosInstance } from './axiosInstance';
-import { Product, ProductEdit } from '../types';
+import {
+    Product,
+    ProductEdit,
+    ProductReviewRequest,
+    ProductCollection,
+} from '../types';
 
 interface ProductService {
-    getProducts(): AxiosPromise<Product[]>;
+    getProducts(
+        pageNumber: string,
+        keyword?: string
+    ): AxiosPromise<ProductCollection>;
     getProductById(id: string): AxiosPromise<Product>;
     deleteProductById(id: string): AxiosPromise<Product[]>;
     createProduct(product: ProductEdit): AxiosPromise<Product>;
     updateProductById(id: string, product: ProductEdit): AxiosPromise<Product>;
+    createProductReview(
+        id: string,
+        review: ProductReviewRequest
+    ): AxiosPromise<Product>;
 }
 
 export const ProductService: ProductService = {
@@ -16,14 +28,22 @@ export const ProductService: ProductService = {
     deleteProductById,
     createProduct,
     updateProductById,
+    createProductReview,
 };
 
-function getProducts() {
-    return axiosInstance.get<Product[]>('/products');
+function getProducts(pageNumber: string, keyword?: string) {
+    const url = keyword
+        ? `/products?pageNumber=${pageNumber}&keyword=${keyword}`
+        : `/products?pageNumber=${pageNumber}`;
+    return axiosInstance.get<ProductCollection>(url);
 }
 
 function getProductById(id: string) {
     return axiosInstance.get<Product>(`/products/${id}`);
+}
+
+function createProductReview(id: string, review: ProductReviewRequest) {
+    return axiosInstance.post<Product>(`/products/${id}/reviews`, review);
 }
 
 // !Admin

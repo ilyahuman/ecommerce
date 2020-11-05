@@ -24,7 +24,6 @@ import { GoBack } from '../../components/GoBack';
 import { useFetch } from '../../hooks/useFetch';
 import { OrderService } from '../../services/orderService';
 
-// ! FIX currentOrder can be NULL
 export const OrderDetails = () => {
     const dispatch = useDispatch();
     const { request, response, loading, error } = useFetch();

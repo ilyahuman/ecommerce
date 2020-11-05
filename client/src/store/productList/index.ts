@@ -1,9 +1,9 @@
 import { Dispatch } from 'redux';
-import axios, { AxiosError } from 'axios';
-import { Product } from '../../types/index';
+import { Product, ProductCollection } from '../../types/index';
 
 // Services
 import { ProductService } from '../../services/productService';
+import { InferValueTypes } from '../../utils/inferTypes';
 
 /**
  * * Actions
@@ -19,100 +19,69 @@ enum ProductActionTypes {
     PRODUCT_DELETE_FAILED = 'PRODUCT_DELETE_FAILED',
 }
 
-interface ProductsRequest {
-    type: ProductActionTypes.PRODUCT_LIST_REQUEST;
-}
+const productActions = {
+    productsRequest: () => {
+        return {
+            type: ProductActionTypes.PRODUCT_LIST_REQUEST,
+        } as const;
+    },
 
-interface ProductsSuccess {
-    type: ProductActionTypes.PRODUCT_LIST_SUCCESS;
-    payload: Product[];
-}
+    productsSuccess: (productCollection: ProductCollection) => {
+        return {
+            type: ProductActionTypes.PRODUCT_LIST_SUCCESS,
+            payload: productCollection,
+        } as const;
+    },
 
-interface ProductsFailed {
-    type: ProductActionTypes.PRODUCT_LIST_FAILED;
-    payload: string;
-}
+    productsFailed: (error: string) => {
+        return {
+            type: ProductActionTypes.PRODUCT_LIST_FAILED,
+            payload: error,
+        } as const;
+    },
 
-interface ProductDeleteRequest {
-    type: ProductActionTypes.PRODUCT_DELETE_REQUEST;
-}
+    productDeleteRequest: () => {
+        return {
+            type: ProductActionTypes.PRODUCT_DELETE_REQUEST,
+        } as const;
+    },
 
-interface ProductDeleteSuccess {
-    type: ProductActionTypes.PRODUCT_DELETE_SUCCESS;
-    payload: Product[];
-}
+    productDeleteSuccess: (products: ProductCollection) => {
+        return {
+            type: ProductActionTypes.PRODUCT_DELETE_SUCCESS,
+            payload: products,
+        } as const;
+    },
 
-interface ProductDeleteFailed {
-    type: ProductActionTypes.PRODUCT_DELETE_FAILED;
-    payload: string;
-}
-
-type ProductActions =
-    | ProductsRequest
-    | ProductsSuccess
-    | ProductsFailed
-    | ProductDeleteRequest
-    | ProductDeleteSuccess
-    | ProductDeleteFailed;
-
-const productsRequest = function (): ProductActions {
-    return {
-        type: ProductActionTypes.PRODUCT_LIST_REQUEST,
-    };
+    productDeleteFailed: (error: string) => {
+        return {
+            type: ProductActionTypes.PRODUCT_DELETE_FAILED,
+            payload: error,
+        } as const;
+    },
 };
 
-const productsSuccess = function (products: Product[]): ProductActions {
-    return {
-        type: ProductActionTypes.PRODUCT_LIST_SUCCESS,
-        payload: products,
-    };
-};
-
-const productsFailed = function (error: string): ProductActions {
-    return {
-        type: ProductActionTypes.PRODUCT_LIST_FAILED,
-        payload: error,
-    };
-};
-
-const productDeleteRequest = function (): ProductActions {
-    return {
-        type: ProductActionTypes.PRODUCT_LIST_REQUEST,
-    };
-};
-
-const productDeleteSuccess = function (products: Product[]): ProductActions {
-    return {
-        type: ProductActionTypes.PRODUCT_LIST_SUCCESS,
-        payload: products,
-    };
-};
-
-const productDeleteFailed = function (error: string): ProductActions {
-    return {
-        type: ProductActionTypes.PRODUCT_LIST_FAILED,
-        payload: error,
-    };
-};
+type ProductActions = ReturnType<InferValueTypes<typeof productActions>>;
 
 /**
  * * Async actions
  */
 
-export const asyncGetProducts = () => async (
-    dispatch: Dispatch<ProductActions>
-) => {
+export const asyncGetProducts = (
+    pageNumber: string = '',
+    keyword?: string
+) => async (dispatch: Dispatch<ProductActions>) => {
     try {
-        dispatch(productsRequest());
+        dispatch(productActions.productsRequest());
 
-        const { data } = await ProductService.getProducts();
+        const { data } = await ProductService.getProducts(pageNumber, keyword);
 
         if (data) {
-            dispatch(productsSuccess(data));
+            dispatch(productActions.productsSuccess(data));
         }
     } catch (error) {
         dispatch(
-            productsFailed(
+            productActions.productsFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -126,7 +95,7 @@ export const asyncDeleteProduct = (id: string) => async (
     dispatch: Dispatch<ProductActions>
 ) => {
     try {
-        dispatch(productDeleteRequest());
+        dispatch(productActions.productDeleteRequest());
 
         const { data } = await ProductService.deleteProductById(id);
 
@@ -137,7 +106,7 @@ export const asyncDeleteProduct = (id: string) => async (
         }
     } catch (error) {
         dispatch(
-            productDeleteFailed(
+            productActions.productDeleteFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -156,12 +125,16 @@ export const asyncDeleteProduct = (id: string) => async (
 
 export interface ProductsState {
     products: Product[];
+    pageNumber: number;
+    totalCount: number;
     loading: boolean;
     error: string | null;
 }
 
 const productState: ProductsState = {
     products: [],
+    pageNumber: 1,
+    totalCount: 1,
     loading: false,
     error: null,
 };
@@ -181,7 +154,9 @@ export const productListReducer = (
             return {
                 ...state,
                 loading: false,
-                products: action.payload,
+                products: action.payload.products,
+                totalCount: action.payload.totalProducts,
+                pageNumber: action.payload.pageNumber,
             };
         case ProductActionTypes.PRODUCT_LIST_FAILED:
         case ProductActionTypes.PRODUCT_DELETE_FAILED:

@@ -2,71 +2,41 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
+import { storage } from '../utils/simplePersistence';
 import { productListReducer } from './productList';
 import { productDetailReducer } from './productDetail';
 import { cartReducer } from './cart';
-import {
-    userReducer,
-    UserState,
-    isSignedIn,
-    userListReducer,
-    UserListState,
-} from './user';
+import { userReducer, isSignedIn, userListReducer } from './user';
 import { orderReducer, orderListReducer } from './order';
 
-import { CartProduct, User, AuthToken } from '../types';
+const adminReducers = combineReducers({
+    userList: userListReducer,
+    orderList: orderListReducer,
+});
 
 const reducers = combineReducers({
     products: productListReducer,
     productDetail: productDetailReducer,
     cart: cartReducer,
     user: userReducer,
-    userList: userListReducer,
     order: orderReducer,
-    orderList: orderListReducer,
+    admin: adminReducers,
 });
 
 export type StoreRootState = ReturnType<typeof reducers>;
 
 const middlewares = [thunk];
 
-let persistCartItems = localStorage.getItem('cartItems');
-let persistUser = localStorage.getItem('user');
-let persistToken = localStorage.getItem('token');
-let persistPaymentMethod = localStorage.getItem('paymentMethod');
-let cartItems: CartProduct[] = [];
-let currentUser: User = {} as User;
-let paymentMethod: string = '';
-let token: AuthToken = {} as AuthToken;
-
-if (persistCartItems) {
-    cartItems = JSON.parse(persistCartItems);
-}
-
-if (persistUser) {
-    currentUser = JSON.parse(persistUser);
-}
-
-if (persistPaymentMethod) {
-    paymentMethod = JSON.parse(persistPaymentMethod);
-}
-
-if (persistToken) {
-    token = JSON.parse(persistToken);
-}
-
-// TODO Types for initial state
-
 const initialState = {
     cart: {
-        cartItems,
-        paymentMethod: paymentMethod || null,
+        cartItems: storage.getItem('cartItems') || [],
+        paymentMethod: storage.getItem('paymentMethod') || null,
     },
     user: {
-        currentUser: currentUser,
+        currentUser: storage.getItem('user') || {},
         loading: false,
         error: null,
-        token: token,
+        token: storage.getItem('token') || {},
         isSignedIn: isSignedIn(),
     },
 };

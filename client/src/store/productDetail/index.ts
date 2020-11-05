@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
-import axios from 'axios';
 import { Product } from '../../types/index';
+import { InferValueTypes } from '../../utils/inferTypes';
 
 // Services
 import { ProductService } from '../../services/productService';
@@ -15,44 +15,31 @@ enum ProductActionTypes {
     PRODUCT_DETAIL_FAILED = 'PRODUCT_DETAIL_FAILED',
 }
 
-interface ProductDetailRequest {
-    type: ProductActionTypes.PRODUCT_DETAIL_REQUEST;
-}
+const productDetailActions = {
+    productRequest: () => {
+        return {
+            type: ProductActionTypes.PRODUCT_DETAIL_REQUEST,
+        } as const;
+    },
 
-interface ProductDetailSuccess {
-    type: ProductActionTypes.PRODUCT_DETAIL_SUCCESS;
-    payload: Product;
-}
+    productSuccess: (product: Product) => {
+        return {
+            type: ProductActionTypes.PRODUCT_DETAIL_SUCCESS,
+            payload: product,
+        } as const;
+    },
 
-interface ProductDetailFailed {
-    type: ProductActionTypes.PRODUCT_DETAIL_FAILED;
-    payload: string;
-}
-
-type ProductDetailActions =
-    | ProductDetailRequest
-    | ProductDetailSuccess
-    | ProductDetailFailed;
-
-const productRequest = function (): ProductDetailActions {
-    return {
-        type: ProductActionTypes.PRODUCT_DETAIL_REQUEST,
-    };
+    productFailed: (error: string) => {
+        return {
+            type: ProductActionTypes.PRODUCT_DETAIL_FAILED,
+            payload: error,
+        } as const;
+    },
 };
 
-const productSuccess = function (product: Product): ProductDetailActions {
-    return {
-        type: ProductActionTypes.PRODUCT_DETAIL_SUCCESS,
-        payload: product,
-    };
-};
-
-const productFailed = function (error: string): ProductDetailActions {
-    return {
-        type: ProductActionTypes.PRODUCT_DETAIL_FAILED,
-        payload: error,
-    };
-};
+type ProductDetailActions = ReturnType<
+    InferValueTypes<typeof productDetailActions>
+>;
 
 /**
  * * Async actions
@@ -62,16 +49,16 @@ export const asyncGetProduct = (id: string) => async (
     dispatch: Dispatch<ProductDetailActions>
 ) => {
     try {
-        dispatch(productRequest());
+        dispatch(productDetailActions.productRequest());
 
         const { data } = await ProductService.getProductById(id);
 
         if (data) {
-            dispatch(productSuccess(data));
+            dispatch(productDetailActions.productSuccess(data));
         }
     } catch (error) {
         dispatch(
-            productFailed(
+            productDetailActions.productFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message

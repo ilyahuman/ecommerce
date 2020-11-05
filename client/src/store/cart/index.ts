@@ -1,6 +1,8 @@
 import { Dispatch } from 'redux';
 import axios from 'axios';
 import { CartProduct, Product } from '../../types';
+import { storage } from '../../utils/simplePersistence';
+import { InferValueTypes } from '../../utils/inferTypes';
 
 import { StoreRootState } from '../index';
 
@@ -15,59 +17,36 @@ enum CartActionTypes {
     CART_ADD_PAYMENT_METHOD = 'CART_ADD_PAYMENT_METHOD',
 }
 
-interface CartAddProduct {
-    type: CartActionTypes.CART_ADD_PRODUCT;
-    payload: CartProduct;
-}
+const cartActions = {
+    cartAddProduct: (product: CartProduct) => {
+        return {
+            type: CartActionTypes.CART_ADD_PRODUCT,
+            payload: product,
+        } as const;
+    },
 
-interface CartRemoveProduct {
-    type: CartActionTypes.CART_REMOVE_PRODUCT;
-    payload: string;
-}
+    cartRemoveProduct: (id: string) => {
+        return {
+            type: CartActionTypes.CART_REMOVE_PRODUCT,
+            payload: id,
+        } as const;
+    },
 
-interface CartAddPaymentMethod {
-    type: CartActionTypes.CART_ADD_PAYMENT_METHOD;
-    payload: string;
-}
+    cartAddPaymentMethod: (paymentMethod: string) => {
+        return {
+            type: CartActionTypes.CART_ADD_PAYMENT_METHOD,
+            payload: paymentMethod,
+        } as const;
+    },
 
-interface CartResetAction {
-    type: CartActionTypes.CART_RESET;
-}
-
-type CartActions =
-    | CartAddProduct
-    | CartRemoveProduct
-    | CartAddPaymentMethod
-    | CartResetAction;
-
-const cartAddProduct = function (product: CartProduct): CartActions {
-    return {
-        type: CartActionTypes.CART_ADD_PRODUCT,
-        payload: product,
-    };
+    cartReset: () => {
+        return {
+            type: CartActionTypes.CART_RESET,
+        } as const;
+    },
 };
 
-const cartRemoveProduct = function (id: string): CartActions {
-    return {
-        type: CartActionTypes.CART_REMOVE_PRODUCT,
-        payload: id,
-    };
-};
-
-export const cartAddPaymentMethod = function (
-    paymentMethod: string
-): CartActions {
-    return {
-        type: CartActionTypes.CART_ADD_PAYMENT_METHOD,
-        payload: paymentMethod,
-    };
-};
-
-const cartReset = function (): CartActions {
-    return {
-        type: CartActionTypes.CART_RESET,
-    };
-};
+export type CartActions = ReturnType<InferValueTypes<typeof cartActions>>;
 
 /**
  * * Async actions
@@ -84,7 +63,7 @@ export const asyncAddCartProduct = (id: string, qty: number) => async (
 
         if (data) {
             dispatch(
-                cartAddProduct({
+                cartActions.cartAddProduct({
                     _id: data._id,
                     name: data.name,
                     image: data.image,
@@ -94,10 +73,7 @@ export const asyncAddCartProduct = (id: string, qty: number) => async (
                 })
             );
 
-            localStorage.setItem(
-                'cartItems',
-                JSON.stringify(getState().cart.cartItems)
-            );
+            storage.setItem('cartItems', getState().cart.cartItems);
         }
     } catch (error) {
         console.error(error.message);
@@ -109,12 +85,9 @@ export const asyncCartAddPaymentMethod = (paymentMethod: string) => async (
     getState: () => StoreRootState
 ) => {
     try {
-        dispatch(cartAddPaymentMethod(paymentMethod));
+        dispatch(cartActions.cartAddPaymentMethod(paymentMethod));
 
-        localStorage.setItem(
-            'paymentMethod',
-            JSON.stringify(getState().cart.paymentMethod)
-        );
+        storage.setItem('paymentMethod', getState().cart.paymentMethod);
     } catch (error) {
         console.error(error.message);
     }
@@ -125,12 +98,9 @@ export const asyncRemoveCartProduct = (id: string) => async (
     getState: () => StoreRootState
 ) => {
     try {
-        dispatch(cartRemoveProduct(id));
+        dispatch(cartActions.cartRemoveProduct(id));
 
-        localStorage.setItem(
-            'cartItems',
-            JSON.stringify(getState().cart.cartItems)
-        );
+        storage.setItem('paymentMethod', getState().cart.paymentMethod);
     } catch (error) {
         console.error(error.message);
     }
@@ -138,10 +108,9 @@ export const asyncRemoveCartProduct = (id: string) => async (
 
 export const asyncCartReset = () => async (dispatch: Dispatch<CartActions>) => {
     try {
-        dispatch(cartReset());
+        dispatch(cartActions.cartReset());
 
-        localStorage.removeItem('cartItems');
-        localStorage.removeItem('paymentMethod');
+        storage.removeItem('cartItems').removeItem('paymentMethod');
     } catch (error) {
         console.error(error.message);
     }

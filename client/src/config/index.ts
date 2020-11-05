@@ -4,6 +4,7 @@ export enum AppRoutes {
     SIGNUP = '/signup',
     CART = '/cart',
     PRODUCT = '/product',
+    SEARCH = '/search',
     PROFILE = '/profile',
     SHIPPING = '/shipping',
     PAYMENT = '/payment',

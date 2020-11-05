@@ -98,6 +98,19 @@ export const App: React.FC = (): JSX.Element => {
                                 component={HomePage}
                             />
                             <Route
+                                exact
+                                path={`${AppRoutes.HOME}page/:pageNumber`}
+                                component={HomePage}
+                            />
+                            <Route
+                                path={`${AppRoutes.SEARCH}/:keyword`}
+                                component={HomePage}
+                            />
+                            <Route
+                                path={`${AppRoutes.SEARCH}/:keyword/page/:pageNumber`}
+                                component={HomePage}
+                            />
+                            <Route
                                 path={AppRoutes.SIGNIN}
                                 component={SignInPage}
                             />

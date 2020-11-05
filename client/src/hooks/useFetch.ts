@@ -18,7 +18,7 @@ export const useFetch = <Res = any>() => {
                 setLoading(true);
 
                 const { data } = await apiServiceCall();
-                debugger;
+
                 if (data && isMounted) {
                     setResponse(data);
                     setLoading(false);

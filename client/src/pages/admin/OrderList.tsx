@@ -14,7 +14,7 @@ import { AppRoutes } from '../../config';
 export const OrderList = (props: any) => {
     const dispatch = useDispatch();
     const { orderList: orders, loading, error } = useSelector(
-        (state: StoreRootState) => state.orderList
+        (state: StoreRootState) => state.admin.orderList
     );
 
     const onDeleteHandler = (id: string) => {

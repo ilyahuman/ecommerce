@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { StoreRootState } from '../../store';
 
-import { clearError } from '../../store/user';
+import { userActions } from '../../store/user';
 
 interface FormContainerProps {
     children: React.ReactNode;
@@ -18,7 +18,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     useEffect(() => {
         if (error) {
             setTimeout(() => {
-                dispatch(clearError());
+                dispatch(userActions.clearError());
             }, 5000);
         }
     }, [error]);

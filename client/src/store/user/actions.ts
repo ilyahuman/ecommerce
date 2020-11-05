@@ -7,6 +7,8 @@ import {
     UserPersonalUpdateRequest,
     AuthToken,
 } from '../../types';
+import { storage } from '../../utils/simplePersistence';
+import { InferValueTypes } from '../../utils/inferTypes';
 
 import { UserActionTypes } from './consts';
 
@@ -22,272 +24,147 @@ import { UserService } from '../../services/userService';
  * * Actions
  */
 
-// * Sign In
-interface SignInRequestAction {
-    type: UserActionTypes.SIGNIN_REQUEST;
-}
+export const userActions = {
+    signInRequest: () => {
+        return {
+            type: UserActionTypes.SIGNIN_REQUEST,
+        } as const;
+    },
 
-interface SignInSuccessAction {
-    type: UserActionTypes.SIGNIN_SUCCESS;
-    payload: AuthToken;
-}
+    signInSuccess: (token: AuthToken) => {
+        return {
+            type: UserActionTypes.SIGNIN_SUCCESS,
+            payload: token,
+        } as const;
+    },
 
-interface SignInFailedAction {
-    type: UserActionTypes.SIGNIN_FAILED;
-    payload: string;
-}
+    signInFailed: (error: string) => {
+        return {
+            type: UserActionTypes.SIGNIN_FAILED,
+            payload: error,
+        } as const;
+    },
 
-// * Sign Up
-interface SignUpRequestAction {
-    type: UserActionTypes.SIGNUP_REQUEST;
-}
+    signUpRequest: () => {
+        return {
+            type: UserActionTypes.SIGNUP_REQUEST,
+        } as const;
+    },
 
-interface SignUpSuccessAction {
-    type: UserActionTypes.SIGNUP_SUCCESS;
-    payload: AuthToken;
-}
+    signUpSuccess: (token: AuthToken) => {
+        return {
+            type: UserActionTypes.SIGNUP_SUCCESS,
+            payload: token,
+        } as const;
+    },
 
-interface SignUpFailedAction {
-    type: UserActionTypes.SIGNUP_FAILED;
-    payload: string;
-}
+    signUpFailed: (error: string) => {
+        return {
+            type: UserActionTypes.SIGNUP_FAILED,
+            payload: error,
+        } as const;
+    },
 
-// * Get User Details
-interface UserDetailsRequestAction {
-    type: UserActionTypes.USER_DETAILS_REQUEST;
-}
+    userDetailsRequest: () => {
+        return {
+            type: UserActionTypes.USER_DETAILS_REQUEST,
+        } as const;
+    },
 
-interface UserDetailsSuccessAction {
-    type: UserActionTypes.USER_DETAILS_SUCCESS;
-    payload: User;
-}
+    userDetailsSuccess: (user: User) => {
+        return {
+            type: UserActionTypes.USER_DETAILS_SUCCESS,
+            payload: user,
+        } as const;
+    },
 
-interface UserDetailsFailedAction {
-    type: UserActionTypes.USER_DETAILS_FAILED;
-    payload: string;
-}
+    userDetailsFailed: (error: string) => {
+        return {
+            type: UserActionTypes.USER_DETAILS_FAILED,
+            payload: error,
+        } as const;
+    },
 
-// * Sign Out
-interface SignOutUserAction {
-    type: UserActionTypes.USER_SIGNOUT;
-}
+    userPersonalUpdateRequest: () => {
+        return {
+            type: UserActionTypes.USER_UPDATE_REQUEST,
+        } as const;
+    },
 
-// * Clear Error
-interface ClearErrorAction {
-    type: UserActionTypes.CLEAR_ERROR;
-}
+    userUpdateSuccess: (user: User) => {
+        return {
+            type: UserActionTypes.USER_UPDATE_SUCCESS,
+            payload: user,
+        } as const;
+    },
 
-// * Update user info
-interface UserPersonalUpdateRequestAction {
-    type: UserActionTypes.USER_UPDATE_REQUEST;
-}
+    userUpdateFailed: (error: string) => {
+        return {
+            type: UserActionTypes.USER_UPDATE_FAILED,
+            payload: error,
+        } as const;
+    },
 
-interface UserUpdateSuccessAction {
-    type: UserActionTypes.USER_UPDATE_SUCCESS;
-    payload: User;
-}
+    signOutUser: () => {
+        return {
+            type: UserActionTypes.USER_SIGNOUT,
+        } as const;
+    },
 
-interface UserUpdateFailedAction {
-    type: UserActionTypes.USER_UPDATE_FAILED;
-    payload: string;
-}
+    clearError: () => {
+        return {
+            type: UserActionTypes.CLEAR_ERROR,
+        } as const;
+    },
 
-// ! Admin actions
-// * Get User List
-interface UserListRequestAction {
-    type: UserActionTypes.USER_LIST_REQUEST;
-}
+    userListRequest: () => {
+        return {
+            type: UserActionTypes.USER_LIST_REQUEST,
+        } as const;
+    },
 
-interface UserListSuccessAction {
-    type: UserActionTypes.USER_LIST_SUCCESS;
-    payload: UserListItem[];
-}
+    userListSuccess: (users: UserListItem[]) => {
+        return {
+            type: UserActionTypes.USER_LIST_SUCCESS,
+            payload: users,
+        } as const;
+    },
 
-interface UserListFailedAction {
-    type: UserActionTypes.USER_LIST_FAILED;
-    payload: string;
-}
+    userListFailed: (error: string) => {
+        return {
+            type: UserActionTypes.USER_LIST_FAILED,
+            payload: error,
+        } as const;
+    },
 
-// * User List CLear
-interface UserListClearAction {
-    type: UserActionTypes.USER_LIST_CLEAR;
-}
+    userDeleteRequest: () => {
+        return {
+            type: UserActionTypes.USER_DELETE_REQUEST,
+        } as const;
+    },
 
-// * User Delete
-interface UserDeleteRequestAction {
-    type: UserActionTypes.USER_DELETE_REQUEST;
-}
+    userDeleteSuccess: (response: string) => {
+        return {
+            type: UserActionTypes.USER_DELETE_SUCCESS,
+            payload: response,
+        } as const;
+    },
 
-interface UserDeleteSuccessAction {
-    type: UserActionTypes.USER_DELETE_SUCCESS;
-    payload: string;
-}
+    userDeleteFailed: (error: string) => {
+        return {
+            type: UserActionTypes.USER_DELETE_FAILED,
+            payload: error,
+        } as const;
+    },
 
-interface UserDeleteFailedAction {
-    type: UserActionTypes.USER_DELETE_FAILED;
-    payload: string;
-}
-
-export type UserActions =
-    | SignInRequestAction
-    | SignInSuccessAction
-    | SignInFailedAction
-    | SignUpRequestAction
-    | SignUpSuccessAction
-    | SignUpFailedAction
-    | UserDetailsRequestAction
-    | UserDetailsSuccessAction
-    | UserDetailsFailedAction
-    | UserPersonalUpdateRequestAction
-    | UserUpdateSuccessAction
-    | UserUpdateFailedAction
-    | SignOutUserAction
-    | UserListRequestAction
-    | UserListSuccessAction
-    | UserListFailedAction
-    | UserListClearAction
-    | UserDeleteRequestAction
-    | UserDeleteSuccessAction
-    | UserDeleteFailedAction
-    | ClearErrorAction;
-
-export const signInRequest = function (): UserActions {
-    return {
-        type: UserActionTypes.SIGNIN_REQUEST,
-    };
+    userListClear: () => {
+        return {
+            type: UserActionTypes.USER_LIST_CLEAR,
+        } as const;
+    },
 };
 
-export const signInSuccess = function (token: AuthToken): UserActions {
-    return {
-        type: UserActionTypes.SIGNIN_SUCCESS,
-        payload: token,
-    };
-};
-
-export const signInFailed = function (error: string): UserActions {
-    return {
-        type: UserActionTypes.SIGNIN_FAILED,
-        payload: error,
-    };
-};
-
-export const signUpRequest = function (): UserActions {
-    return {
-        type: UserActionTypes.SIGNUP_REQUEST,
-    };
-};
-
-export const signUpSuccess = function (token: AuthToken): UserActions {
-    return {
-        type: UserActionTypes.SIGNUP_SUCCESS,
-        payload: token,
-    };
-};
-
-export const signUpFailed = function (error: string): UserActions {
-    return {
-        type: UserActionTypes.SIGNUP_FAILED,
-        payload: error,
-    };
-};
-
-export const userDetailsRequest = function (): UserActions {
-    return {
-        type: UserActionTypes.USER_DETAILS_REQUEST,
-    };
-};
-
-export const userDetailsSuccess = function (user: User): UserActions {
-    return {
-        type: UserActionTypes.USER_DETAILS_SUCCESS,
-        payload: user,
-    };
-};
-
-export const userDetailsFailed = function (error: string): UserActions {
-    return {
-        type: UserActionTypes.USER_DETAILS_FAILED,
-        payload: error,
-    };
-};
-
-export const userPersonalUpdateRequest = function (): UserActions {
-    return {
-        type: UserActionTypes.USER_UPDATE_REQUEST,
-    };
-};
-
-export const userUpdateSuccess = function (user: User): UserActions {
-    return {
-        type: UserActionTypes.USER_UPDATE_SUCCESS,
-        payload: user,
-    };
-};
-
-export const userUpdateFailed = function (error: string): UserActions {
-    return {
-        type: UserActionTypes.USER_UPDATE_FAILED,
-        payload: error,
-    };
-};
-
-export const signOutUser = function (): UserActions {
-    return {
-        type: UserActionTypes.USER_SIGNOUT,
-    };
-};
-
-export const clearError = function (): ClearErrorAction {
-    return {
-        type: UserActionTypes.CLEAR_ERROR,
-    };
-};
-
-export const userListRequest = function (): UserActions {
-    return {
-        type: UserActionTypes.USER_LIST_REQUEST,
-    };
-};
-
-export const userListSuccess = function (users: UserListItem[]): UserActions {
-    return {
-        type: UserActionTypes.USER_LIST_SUCCESS,
-        payload: users,
-    };
-};
-
-export const userListFailed = function (error: string): UserActions {
-    return {
-        type: UserActionTypes.USER_LIST_FAILED,
-        payload: error,
-    };
-};
-
-export const userDeleteRequest = function (): UserActions {
-    return {
-        type: UserActionTypes.USER_DELETE_REQUEST,
-    };
-};
-
-export const userDeleteSuccess = function (response: string): UserActions {
-    return {
-        type: UserActionTypes.USER_DELETE_SUCCESS,
-        payload: response,
-    };
-};
-
-export const userDeleteFailed = function (error: string): UserActions {
-    return {
-        type: UserActionTypes.USER_DELETE_FAILED,
-        payload: error,
-    };
-};
-
-export const userListClear = function (): UserActions {
-    return {
-        type: UserActionTypes.USER_LIST_CLEAR,
-    };
-};
+export type UserActions = ReturnType<InferValueTypes<typeof userActions>>;
 
 /**
  * * Async actions
@@ -297,20 +174,21 @@ export const asyncSignIn = (user: UserSignInRequest) => async (
     dispatch: Dispatch<UserActions>
 ) => {
     try {
-        dispatch(signInRequest());
+        dispatch(userActions.signInRequest());
 
         const { data: token } = await AuthService.signIn(user);
 
         if (token) {
-            dispatch(signInSuccess(token));
-            localStorage.setItem('token', JSON.stringify(token));
+            dispatch(userActions.signInSuccess(token));
+
+            storage.setItem('token', token);
 
             // @ts-ignore
             dispatch(asyncGetUser());
         }
     } catch (error) {
         dispatch(
-            signInFailed(
+            userActions.signInFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -325,21 +203,22 @@ export const asyncSignUp = (userCreds: UserSignUpRequest) => async (
     dispatch: Dispatch<any>
 ) => {
     try {
-        dispatch(signUpRequest());
+        dispatch(userActions.signUpRequest());
 
         // Save to DB and if all is OK go forward
         const { data: token } = await AuthService.signUp(userCreds);
 
         if (token) {
-            dispatch(signUpSuccess(token));
-            localStorage.setItem('token', JSON.stringify(token));
+            dispatch(userActions.signUpSuccess(token));
+
+            storage.setItem('token', token);
 
             // @ts-ignore
             dispatch(asyncGetUser());
         }
     } catch (error) {
         dispatch(
-            signUpFailed(
+            userActions.signUpFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -351,17 +230,18 @@ export const asyncSignUp = (userCreds: UserSignUpRequest) => async (
 
 export const asyncGetUser = () => async (dispatch: Dispatch<UserActions>) => {
     try {
-        dispatch(userDetailsRequest());
+        dispatch(userActions.userDetailsRequest());
 
         const { data } = await UserService.getUserDetails();
 
         if (data) {
-            dispatch(userDetailsSuccess(data));
-            localStorage.setItem('user', JSON.stringify(data));
+            dispatch(userActions.userDetailsSuccess(data));
+
+            storage.setItem('user', data);
         }
     } catch (error) {
         dispatch(
-            userDetailsFailed(
+            userActions.userDetailsFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -375,9 +255,9 @@ export const asyncSignOut = () => async (dispatch: Dispatch<UserActions>) => {
     // ? Here we can revoke token ?
 
     // * Remove user and token from local storage and Redux.
-    dispatch(signOutUser());
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    dispatch(userActions.signOutUser());
+    storage.removeItem('user');
+    storage.removeItem('token');
     // * Clean cart and orders from local storage and Redux.
     // @ts-ignore
     dispatch(asyncCartReset());
@@ -400,7 +280,7 @@ export const asyncUpdateUser = (userCreds: UserPersonalUpdateRequest) => async (
     getState: () => StoreRootState
 ) => {
     try {
-        dispatch(userPersonalUpdateRequest());
+        dispatch(userActions.userPersonalUpdateRequest());
 
         const store = getState();
         const {
@@ -414,13 +294,13 @@ export const asyncUpdateUser = (userCreds: UserPersonalUpdateRequest) => async (
         if (data) {
             const userUpdated = Object.assign({}, currentUser, data);
 
-            dispatch(userUpdateSuccess(userUpdated));
+            dispatch(userActions.userUpdateSuccess(userUpdated));
 
-            localStorage.setItem('user', JSON.stringify(userUpdated));
+            storage.setItem('user', userUpdated);
         }
     } catch (error) {
         dispatch(
-            userUpdateFailed(
+            userActions.userUpdateFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -434,16 +314,16 @@ export const asyncUpdateUser = (userCreds: UserPersonalUpdateRequest) => async (
 
 export const asyncUserList = () => async (dispatch: Dispatch<UserActions>) => {
     try {
-        dispatch(userListRequest());
+        dispatch(userActions.userListRequest());
 
         const { data } = await UserService.getUserList();
 
         if (data) {
-            dispatch(userListSuccess(data));
+            dispatch(userActions.userListSuccess(data));
         }
     } catch (error) {
         dispatch(
-            userListFailed(
+            userActions.userListFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -457,7 +337,7 @@ export const asyncUserListClear = () => async (
     dispatch: Dispatch<UserActions>
 ) => {
     try {
-        dispatch(userListClear());
+        dispatch(userActions.userListClear());
     } catch (error) {}
 };
 
@@ -465,18 +345,18 @@ export const asyncDeleteUser = (id: string) => async (
     dispatch: Dispatch<UserActions>
 ) => {
     try {
-        dispatch(userDeleteRequest());
+        dispatch(userActions.userDeleteRequest());
 
         const { data } = await UserService.deleteUser(id);
 
         if (data) {
-            dispatch(userDeleteSuccess(data));
+            dispatch(userActions.userDeleteSuccess(data));
             // @ts-ignore
             dispatch(asyncUserList());
         }
     } catch (error) {
         dispatch(
-            userDeleteFailed(
+            userActions.userDeleteFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message

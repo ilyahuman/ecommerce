@@ -5,6 +5,7 @@ import {
     OrderUserListItem,
     OrderAdminListItem,
 } from '../../types';
+import { InferValueTypes } from '../../utils/inferTypes';
 
 // Services
 import { OrderService } from '../../services/orderService';
@@ -35,221 +36,140 @@ enum OrderActionTypes {
     ORDER_ADMIN_LIST_FAILED = 'ORDER_ADMIN_LIST_FAILED',
 }
 
-interface OrderUserListRequestAction {
-    type: OrderActionTypes.ORDER_USER_LIST_REQUEST;
-}
+export const orderActions = {
+    orderUserListRequest: () => {
+        return {
+            type: OrderActionTypes.ORDER_USER_LIST_REQUEST,
+        } as const;
+    },
 
-interface OrderUserListSuccessAction {
-    type: OrderActionTypes.ORDER_USER_LIST_SUCCESS;
-    payload: OrderUserListItem[];
-}
+    orderUserListSuccess: (order: OrderUserListItem[]) => {
+        return {
+            type: OrderActionTypes.ORDER_USER_LIST_SUCCESS,
+            payload: order,
+        } as const;
+    },
 
-interface OrderUserListFailedAction {
-    type: OrderActionTypes.ORDER_USER_LIST_FAILED;
-    payload: string;
-}
+    orderUserListFailed: (error: string) => {
+        return {
+            type: OrderActionTypes.ORDER_USER_LIST_FAILED,
+            payload: error,
+        } as const;
+    },
 
-interface OrderCreateRequestAction {
-    type: OrderActionTypes.ORDER_CREATE_REQUEST;
-}
+    orderCrerateRequest: () => {
+        return {
+            type: OrderActionTypes.ORDER_CREATE_REQUEST,
+        } as const;
+    },
 
-interface OrderCreateSuccessAction {
-    type: OrderActionTypes.ORDER_CREATE_SUCCESS;
-    payload: Order;
-}
+    orderCrerateSuccess: (order: Order) => {
+        return {
+            type: OrderActionTypes.ORDER_CREATE_SUCCESS,
+            payload: order,
+        } as const;
+    },
 
-interface OrderCreateFailedAction {
-    type: OrderActionTypes.ORDER_CREATE_FAILED;
-    payload: string;
-}
+    orderCrerateFailed: (error: string) => {
+        return {
+            type: OrderActionTypes.ORDER_CREATE_FAILED,
+            payload: error,
+        } as const;
+    },
 
-interface OrderDetailsRequestAction {
-    type: OrderActionTypes.ORDER_DETAILS_REQUEST;
-}
+    orderDetailsRequest: () => {
+        return {
+            type: OrderActionTypes.ORDER_DETAILS_REQUEST,
+        } as const;
+    },
 
-interface OrderDetailsSuccessAction {
-    type: OrderActionTypes.ORDER_DETAILS_SUCCESS;
-    payload: Order;
-}
+    orderDetailsSuccess: (order: Order) => {
+        return {
+            type: OrderActionTypes.ORDER_DETAILS_SUCCESS,
+            payload: order,
+        } as const;
+    },
 
-interface OrderDetailsFailedAction {
-    type: OrderActionTypes.ORDER_DETAILS_FAILED;
-    payload: string;
-}
+    orderDetailsFailed: (error: string) => {
+        return {
+            type: OrderActionTypes.ORDER_DETAILS_FAILED,
+            payload: error,
+        } as const;
+    },
 
-interface OrderClearLastAction {
-    type: OrderActionTypes.ORDER_CLEAR_LAST;
-}
+    orderPayRequest: () => {
+        return {
+            type: OrderActionTypes.ORDER_DETAILS_REQUEST,
+        } as const;
+    },
 
-interface OrderResetAction {
-    type: OrderActionTypes.ORDER_RESET;
-}
+    orderPaySuccess: (paymentResult: any) => {
+        return {
+            type: OrderActionTypes.ORDER_DETAILS_SUCCESS,
+            payload: paymentResult,
+        } as const;
+    },
 
-// !Admin
-interface OrderAdminListRequestAction {
-    type: OrderActionTypes.ORDER_ADMIN_LIST_REQUEST;
-}
+    orderPayFailed: (error: string) => {
+        return {
+            type: OrderActionTypes.ORDER_DETAILS_FAILED,
+            payload: error,
+        } as const;
+    },
 
-interface OrderAdminListSuccessAction {
-    type: OrderActionTypes.ORDER_ADMIN_LIST_SUCCESS;
-    payload: OrderAdminListItem[];
-}
+    orderClearLast: () => {
+        return {
+            type: OrderActionTypes.ORDER_CLEAR_LAST,
+        } as const;
+    },
 
-interface OrderAdminListFailedAction {
-    type: OrderActionTypes.ORDER_ADMIN_LIST_FAILED;
-    payload: string;
-}
+    orderReset: () => {
+        return {
+            type: OrderActionTypes.ORDER_RESET,
+        } as const;
+    },
 
-type OrderActions =
-    | OrderUserListRequestAction
-    | OrderUserListSuccessAction
-    | OrderUserListFailedAction
-    | OrderCreateRequestAction
-    | OrderCreateSuccessAction
-    | OrderCreateFailedAction
-    | OrderDetailsRequestAction
-    | OrderDetailsSuccessAction
-    | OrderDetailsFailedAction
-    | OrderResetAction
-    | OrderClearLastAction
-    | OrderAdminListRequestAction
-    | OrderAdminListSuccessAction
-    | OrderAdminListFailedAction;
+    orderAdminListRequest: () => {
+        return {
+            type: OrderActionTypes.ORDER_ADMIN_LIST_REQUEST,
+        } as const;
+    },
 
-const orderUserListRequest = function (): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_USER_LIST_REQUEST,
-    };
+    orderAdminListSuccess: (order: OrderAdminListItem[]) => {
+        return {
+            type: OrderActionTypes.ORDER_ADMIN_LIST_SUCCESS,
+            payload: order,
+        } as const;
+    },
+
+    orderAdminListFailed: (error: string) => {
+        return {
+            type: OrderActionTypes.ORDER_ADMIN_LIST_FAILED,
+            payload: error,
+        } as const;
+    },
 };
 
-const orderUserListSuccess = function (
-    order: OrderUserListItem[]
-): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_USER_LIST_SUCCESS,
-        payload: order,
-    };
-};
-
-const orderUserListFailed = function (error: string): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_USER_LIST_FAILED,
-        payload: error,
-    };
-};
-
-const orderCrerateRequest = function (): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_CREATE_REQUEST,
-    };
-};
-
-const orderCrerateSuccess = function (order: Order): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_CREATE_SUCCESS,
-        payload: order,
-    };
-};
-
-const orderCrerateFailed = function (error: string): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_CREATE_FAILED,
-        payload: error,
-    };
-};
-
-const orderDetailsRequest = function (): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_DETAILS_REQUEST,
-    };
-};
-
-const orderDetailsSuccess = function (order: Order): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_DETAILS_SUCCESS,
-        payload: order,
-    };
-};
-
-const orderDetailsFailed = function (error: string): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_DETAILS_FAILED,
-        payload: error,
-    };
-};
-
-const orderPayRequest = function (): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_DETAILS_REQUEST,
-    };
-};
-
-const orderPaySuccess = function (paymentResult: any): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_DETAILS_SUCCESS,
-        payload: paymentResult,
-    };
-};
-
-const orderPayFailed = function (error: string): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_DETAILS_FAILED,
-        payload: error,
-    };
-};
-
-export const orderClearLast = function (): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_CLEAR_LAST,
-    };
-};
-
-export const orderReset = function (): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_RESET,
-    };
-};
-
-// !Admin
-const orderAdminListRequest = function (): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_ADMIN_LIST_REQUEST,
-    };
-};
-
-const orderAdminListSuccess = function (
-    order: OrderAdminListItem[]
-): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_ADMIN_LIST_SUCCESS,
-        payload: order,
-    };
-};
-
-const orderAdminListFailed = function (error: string): OrderActions {
-    return {
-        type: OrderActionTypes.ORDER_ADMIN_LIST_FAILED,
-        payload: error,
-    };
-};
+type OrderActions = ReturnType<InferValueTypes<typeof orderActions>>;
 
 /**
  * * Async actions
  */
+
 export const asyncGetOrders = () => async (
     dispatch: Dispatch<OrderActions>
 ) => {
     try {
-        dispatch(orderUserListRequest());
+        dispatch(orderActions.orderUserListRequest());
 
         const { data } = await OrderService.getOrders();
 
         if (data) {
-            dispatch(orderUserListSuccess(data));
+            dispatch(orderActions.orderUserListSuccess(data));
         }
     } catch (error) {
         dispatch(
-            orderUserListFailed(
+            orderActions.orderUserListFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -263,16 +183,16 @@ export const asyncOrderCreate = (order: OrderCreate) => async (
     dispatch: Dispatch<OrderActions>
 ) => {
     try {
-        dispatch(orderCrerateRequest());
+        dispatch(orderActions.orderCrerateRequest());
 
         const { data } = await OrderService.createOrder(order);
 
         if (data) {
-            dispatch(orderCrerateSuccess(data));
+            dispatch(orderActions.orderCrerateSuccess(data));
         }
     } catch (error) {
         dispatch(
-            orderCrerateFailed(
+            orderActions.orderCrerateFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -286,16 +206,16 @@ export const asyncGetOrder = (id: string) => async (
     dispatch: Dispatch<OrderActions>
 ) => {
     try {
-        dispatch(orderDetailsRequest());
+        dispatch(orderActions.orderDetailsRequest());
 
         const { data } = await OrderService.getOrderDetails(id);
 
         if (data) {
-            dispatch(orderDetailsSuccess(data));
+            dispatch(orderActions.orderDetailsSuccess(data));
         }
     } catch (error) {
         dispatch(
-            orderDetailsFailed(
+            orderActions.orderDetailsFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message
@@ -309,7 +229,7 @@ export const asyncOrderReset = () => async (
     dispatch: Dispatch<OrderActions>
 ) => {
     try {
-        dispatch(orderReset());
+        dispatch(orderActions.orderReset());
     } catch (error) {
         console.error(error.message);
     }
@@ -319,16 +239,16 @@ export const asyncGetOrderUserList = () => async (
     dispatch: Dispatch<OrderActions>
 ) => {
     try {
-        dispatch(orderAdminListRequest());
+        dispatch(orderActions.orderAdminListRequest());
 
         const { data } = await OrderService.getOrderList();
 
         if (data) {
-            dispatch(orderAdminListSuccess(data));
+            dispatch(orderActions.orderAdminListSuccess(data));
         }
     } catch (error) {
         dispatch(
-            orderAdminListFailed(
+            orderActions.orderAdminListFailed(
                 error.response && error.response.data.message
                     ? error.response.data.message
                     : error.message

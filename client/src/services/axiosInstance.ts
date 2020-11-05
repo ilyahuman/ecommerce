@@ -1,17 +1,14 @@
 import axios from 'axios';
 import { AuthToken } from '../types';
+import { storage } from '../utils/simplePersistence';
 
 export function getAuthToken() {
-    const storedToken = localStorage.getItem('token');
+    const storedToken = storage.getItem('token');
     let token: AuthToken | null = null;
 
     if (storedToken) {
-        token = JSON.parse(storedToken);
-    }
-
-    if (token) {
         // for Express back-end
-        return { authorization: `Bearer ${token.accessToken}` };
+        return { authorization: `Bearer ${storedToken.accessToken}` };
     } else {
         return {};
     }

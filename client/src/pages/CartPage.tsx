@@ -19,7 +19,7 @@ import {
 
 import { Message } from '../components/Message';
 import { AppRoutes } from '../config';
-import { makeQtySelect } from '../utils/makeQtySelect';
+import { makeArrayFromInt } from '../utils/makeArrayFromInt';
 
 function getProductTotalCount(products: CartProduct[]): number {
     return products.reduce((acc, product: CartProduct) => acc + product.qty, 0);
@@ -59,7 +59,7 @@ export const CartPage = () => {
 
     return (
         <div>
-            {cartItems.length === 0 ? (
+            {!cartItems.length ? (
                 <Message>
                     <span>Cart is empty</span>
                 </Message>
@@ -102,7 +102,7 @@ export const CartPage = () => {
                                                         )
                                                     }
                                                 >
-                                                    {makeQtySelect(
+                                                    {makeArrayFromInt(
                                                         product.countInStock
                                                     ).map(
                                                         (
